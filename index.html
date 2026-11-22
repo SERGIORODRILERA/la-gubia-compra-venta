@@ -1,0 +1,1825 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>La Gubía Compra-Venta</title>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: escenario fijo de 1440×1000 que se escala al visor (iPad en horizontal). Cada diapositiva es una pista:
+   fotografía real del club, titulares condensados de retransmisión hípica y la X del logo como diagonal recurrente.
+   El paso de diapositiva sigue al dedo; el polvo dorado de la pista forma el caballo del logo. */
+:root{
+  --navy:#0A2E50; --deep:#061A2E; --abyss:#030E1A; --cream:#F9F7F2; --yellow:#FFC428; --wine:#630D16; --gold:#D6B46A;
+  --mist:rgba(249,247,242,.68); --hair:rgba(249,247,242,.16); --ink-soft:rgba(10,46,80,.74); --hair-d:rgba(10,46,80,.18);
+  --hot:#FF6B3D; --cool:#7FB2E5; --ok:#25D366;
+  --f-d:"Archivo","Arial Narrow","Helvetica Neue",Impact,sans-serif;
+  --f-s:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-t:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-m:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--abyss);color:var(--cream);font-family:var(--f-t);overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;transition:background .7s}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+#frame{position:fixed;inset:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
+#stage{position:absolute;left:50%;top:50%;width:1440px;height:1000px;transform:translate(-50%,-50%);transform-origin:center;overflow:hidden;background:var(--deep);user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab}
+
+/* ---------- diapositivas ---------- */
+.s{position:absolute;inset:0;visibility:hidden;opacity:0;overflow:hidden}
+.s.on,.s.pre{visibility:visible;opacity:1}
+.s[data-tone=dark]{background:var(--deep);color:var(--cream)}
+.s[data-tone=light]{background:var(--cream);color:var(--navy)}
+.s[data-tone=yel]{background:var(--yellow);color:var(--navy)}
+.s.pre [data-a]:not(.ph),.s.pre .ch,.s.pre .lap,.s.pre .p3d{opacity:0!important}
+.abs{position:absolute}
+.bg{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.ph{position:absolute;overflow:hidden;background:var(--navy)}
+.ph img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover}
+
+/* ---------- tipografía ---------- */
+.k{font:500 15px/1 var(--f-m);letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);display:flex;align-items:center;gap:14px;white-space:nowrap}
+.k::before{content:"";width:30px;height:10px;background:currentColor;transform:skewX(-24deg);flex:none}
+[data-tone=light] .k{color:var(--wine)}
+[data-tone=yel] .k{color:var(--navy)}
+.h{font-family:var(--f-d);font-stretch:62%;font-weight:900;text-transform:uppercase;line-height:.87;letter-spacing:-.004em}
+.h1{font-size:196px}.h2{font-size:104px}.h3{font-size:78px}.h4{font-size:34px;line-height:.96;font-weight:800}
+.it{font-family:var(--f-s);font-style:italic;font-weight:500;font-stretch:100%;text-transform:none;letter-spacing:-.025em;color:var(--yellow);font-size:.84em}
+[data-tone=light] .it,[data-tone=yel] .it{color:var(--wine)}
+.p{font-size:23px;line-height:1.42;color:var(--mist);font-weight:400}
+[data-tone=light] .p{color:var(--ink-soft)}
+.mono{font:500 14px/1.35 var(--f-m);letter-spacing:.1em;text-transform:uppercase}
+.y{color:var(--yellow)}
+.ln{display:block;overflow:hidden;padding:.16em .12em .09em 0;margin:-.16em 0 -.09em}
+.ln>*{display:block}
+.ln>i{font-style:normal}
+.wd{display:inline-block;white-space:nowrap}
+.ch{display:inline-block}
+.tag{display:inline-flex;align-items:center;gap:12px;background:var(--yellow);color:var(--navy);font:600 15px/1 var(--f-m);letter-spacing:.1em;text-transform:uppercase;padding:14px 26px;clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);white-space:nowrap}
+.tag b{font-weight:600;opacity:.6}
+
+/* ---------- animaciones de entrada (solo en la diapositiva activa) ---------- */
+@keyframes a-up{from{opacity:0;transform:translateY(46px)}}
+@keyframes a-fade{from{opacity:0}}
+@keyframes a-left{from{opacity:0;transform:translateX(-80px)}}
+@keyframes a-right{from{opacity:0;transform:translateX(80px)}}
+@keyframes a-zoom{from{opacity:0;transform:scale(.84)}}
+@keyframes a-wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes a-flip{from{opacity:0;transform:perspective(900px) rotateY(-70deg) translateX(-30px)}to{opacity:1;transform:perspective(900px) rotateY(0)}}
+@keyframes a-growx{from{transform:scaleX(0)}}
+@keyframes a-growy{from{transform:scaleY(0)}}
+@keyframes ch-in{from{transform:translateY(118%) rotate(8deg);opacity:0}}
+@keyframes kb{from{transform:scale(1.16)}to{transform:scale(1.03)}}
+@keyframes kb2{from{transform:scale(1.04) translateX(-1.5%)}to{transform:scale(1.12) translateX(1.5%)}}
+@keyframes draw{from{stroke-dashoffset:var(--len,2000)}to{stroke-dashoffset:0}}
+@keyframes blink{50%{opacity:.25}}
+.s.on [data-a]{animation-duration:.95s;animation-timing-function:var(--ease);animation-fill-mode:both;animation-delay:calc(var(--d,0)*1ms)}
+.s.on [data-a=up]{animation-name:a-up}
+.s.on [data-a=fade]{animation-name:a-fade;animation-duration:1.2s}
+.s.on [data-a=left]{animation-name:a-left}
+.s.on [data-a=right]{animation-name:a-right}
+.s.on [data-a=zoom]{animation-name:a-zoom}
+.s.on [data-a=wipe]{animation-name:a-wipe;animation-duration:1.1s}
+.s.on [data-a=flip]{animation-name:a-flip;animation-duration:1.1s}
+.s.on [data-a=growx]{animation-name:a-growx;transform-origin:left}
+.s.on [data-a=growy]{animation-name:a-growy;transform-origin:top}
+.s.on .ch{animation:ch-in .95s var(--ease) both;animation-delay:calc(var(--d,0)*1ms + var(--c,0)*17ms)}
+.s.on .kb{animation:kb 16s cubic-bezier(.2,.6,.3,1) both}
+.s.on .kb2{animation:kb2 22s ease-in-out infinite alternate}
+.s.on .draw{stroke-dasharray:var(--len,2000);animation:draw 1.8s var(--ease) both;animation-delay:calc(var(--d,0)*1ms)}
+
+/* ---------- objetos en 3D: móviles y portátil ---------- */
+@keyframes flt{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-12px) rotate(.5deg)}}
+.s.on .float{animation:flt 7s ease-in-out infinite}
+.p3d{transform:perspective(1700px) rotateY(22deg) rotateX(5deg) rotateZ(-1.5deg)}
+@keyframes a-phone{from{opacity:0;transform:perspective(1700px) translateX(-170px) rotateY(52deg) rotateX(10deg) scale(.88)}to{opacity:1;transform:perspective(1700px) rotateY(22deg) rotateX(5deg) rotateZ(-1.5deg)}}
+.s.on .p3d{animation:a-phone 1.6s var(--ease) both;animation-delay:calc(var(--d,0)*1ms)}
+.lap{position:absolute;left:72px;top:258px;width:1296px;height:660px}
+.lap-s{position:absolute;left:26px;right:26px;top:0;height:636px;background:#0c0d10;border-radius:20px 20px 4px 4px;box-shadow:0 0 0 2px #2b2d33 inset,0 50px 90px rgba(0,0,0,.55)}
+.lap-s .rsim{position:absolute;left:14px;top:14px;width:1296px;height:640px;transform:scale(.9383);transform-origin:0 0}
+.lap-b{position:absolute;left:0;right:0;bottom:0;height:24px;background:linear-gradient(180deg,#e3e5ea,#a7abb3 60%,#7d8088);border-radius:3px 3px 16px 16px}
+.lap-b::after{content:"";position:absolute;left:50%;top:0;width:170px;height:8px;margin-left:-85px;background:#8c9098;border-radius:0 0 10px 10px}
+@keyframes a-land{from{opacity:0;transform:perspective(2000px) translateY(150px) rotateX(38deg) scale(.84)}to{opacity:1;transform:perspective(2000px) rotateX(0)}}
+.s.on .lap{animation:a-land 1.6s var(--ease) both;animation-delay:calc(var(--d,0)*1ms)}
+
+/* ---------- cinta en movimiento ---------- */
+.mq{position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap;font:600 15px/1 var(--f-m);letter-spacing:.18em;text-transform:uppercase;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:15px 0}
+.mq>div{display:inline-block}
+@keyframes mq{to{transform:translateX(-50%)}}
+.s.on .mq>div{animation:mq 34s linear infinite}
+[data-tone=yel] .mq{border-color:var(--navy)}
+
+/* ---------- portadillas de sección ---------- */
+.sec .sh{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,26,46,.93),rgba(6,26,46,.6) 55%,rgba(6,26,46,.3)),linear-gradient(0deg,rgba(6,26,46,.92),rgba(6,26,46,0) 55%)}
+.sec .num{position:absolute;right:52px;top:64px;font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:640px;line-height:.78;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:3px var(--yellow)}
+.sec .k{left:72px;top:468px}
+.sec h1{left:72px;top:506px;font-size:178px}
+.sec h1 .it{font-size:.6em;padding-bottom:.16em}
+.sec .mq{bottom:104px}
+
+/* ---------- transición que sigue al dedo ---------- */
+#dim{position:absolute;inset:0;background:#02080f;opacity:0;pointer-events:none;z-index:2}
+#edge{position:absolute;left:-7px;top:-10%;width:14px;height:120%;background:var(--yellow);box-shadow:34px 0 0 -6px rgba(249,247,242,.6);z-index:45;opacity:0;pointer-events:none}
+#dust{position:absolute;inset:0;width:100%;height:100%;z-index:40;pointer-events:none}
+
+/* ---------- HUD ---------- */
+#hud{position:absolute;inset:0;z-index:50;pointer-events:none;color:var(--hudc,var(--cream));transition:color .5s}
+#stage[data-tone=light] #hud,#stage[data-tone=yel] #hud{--hudc:var(--navy)}
+#hud .hl{position:absolute;left:72px;top:34px;height:44px;display:flex;align-items:center;gap:14px;transition:opacity .5s}
+#hud .hl img{height:44px;width:auto}
+#hud .hl .lm{display:none;width:36px;height:44px;background:var(--navy);-webkit-mask:url(img-logo.png) center/contain no-repeat;mask:url(img-logo.png) center/contain no-repeat}
+#stage[data-tone=light] #hud .hl img,#stage[data-tone=yel] #hud .hl img{display:none}
+#stage[data-tone=light] #hud .hl .lm,#stage[data-tone=yel] #hud .hl .lm{display:block}
+#hud .hn{font:500 12px/1.3 var(--f-m);letter-spacing:.16em;text-transform:uppercase;opacity:.82}
+#hud .hr{position:absolute;right:72px;top:46px;font:500 13px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;display:flex;gap:16px;align-items:center}
+#hud .hr b{font-weight:600}
+#hud .hr span{opacity:.7}
+#stage[data-cover] #hud .hl{opacity:0}
+#course{position:absolute;left:72px;right:268px;bottom:30px;height:40px;pointer-events:auto}
+#course .rail{position:absolute;left:0;right:0;bottom:9px;height:2px;background:currentColor;opacity:.22}
+#course .fill{position:absolute;left:0;bottom:9px;height:2px;background:var(--yellow);width:0;transition:width .9s var(--ease)}
+#stage[data-tone=yel] #course .fill{background:var(--navy)}
+#course button{position:absolute;bottom:0;width:20px;height:20px;margin-left:-10px;display:flex;align-items:flex-end;justify-content:center}
+#course button i{width:2px;height:9px;background:currentColor;opacity:.4;margin-bottom:6px;transition:all .3s}
+#course button.sec i{height:17px;width:3px;opacity:.85}
+#course button.done i{background:var(--yellow);opacity:1}
+#stage[data-tone=yel] #course button.done i{background:var(--navy)}
+#runner{position:absolute;bottom:11px;left:0;width:34px;height:34px;margin-left:-17px;transition:left .9s var(--ease);background:var(--yellow);-webkit-mask:url(img-horse.png) center/contain no-repeat;mask:url(img-horse.png) center/contain no-repeat}
+#stage[data-tone=yel] #runner{background:var(--navy)}
+@keyframes hop{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-16px) rotate(-10deg)}70%{transform:translateY(-6px) rotate(6deg)}}
+#runner.hop{animation:hop .9s var(--ease)}
+#nav{position:absolute;right:72px;bottom:26px;display:flex;gap:8px;pointer-events:auto}
+#nav button{width:44px;height:44px;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;font:500 16px/1 var(--f-m);opacity:.75;transition:all .25s}
+#nav button:active{background:var(--yellow);color:var(--navy);border-color:var(--yellow);opacity:1}
+#rot{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font:500 12px/1 var(--f-m);letter-spacing:.1em;text-transform:uppercase;background:var(--yellow);color:var(--navy);padding:10px 14px;display:none;z-index:90;white-space:nowrap}
+@media (orientation:portrait) and (max-width:700px){#rot{display:block}}
+@media (prefers-reduced-motion:reduce){.s.on [data-a],.s.on .ch,.s.on .kb,.s.on .kb2,.s.on .draw,.s.on .float,.s.on .p3d,.s.on .lap,.s.on .mq>div{animation:none!important}#dust{display:none}}
+</style>
+<div id="frame"><div id="stage" data-tone="dark" data-cover>
+
+<style>
+/* ===== 1 · portada ===== */
+#s1 .phc{position:absolute;overflow:hidden;background:var(--navy);left:560px;top:0;width:880px;height:1000px;clip-path:polygon(190px 0,100% 0,100% 100%,0 100%)}
+#s1 .phc img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover}
+#s1 .phc::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(6,26,46,.94) 4%,rgba(6,26,46,.4) 32%,rgba(6,26,46,0) 58%),linear-gradient(0deg,rgba(6,26,46,.8),rgba(6,26,46,0) 36%)}
+@keyframes a-open{from{clip-path:polygon(190px 0,190px 0,0 100%,0 100%)}to{clip-path:polygon(190px 0,100% 0,100% 100%,0 100%)}}
+#s1.on .phc{animation:a-open 1.6s var(--ease) 3.1s both}
+#s1.pre .phc{opacity:0}
+#s1 svg{position:absolute;inset:0}
+#s1 .logo{left:72px;top:54px;height:150px;width:auto}
+#s1 .k{left:72px;top:262px}
+#s1 h1{left:72px;top:300px;font-size:134px}
+#s1 h1 .it{font-size:.7em;padding-bottom:.16em}
+#s1 .p{left:72px;top:672px;width:500px;font-size:21px}
+#s1 .tag{right:72px;top:838px}
+/* ===== 2 · punto de partida ===== */
+#s2 .ph{left:0;top:0;width:620px;height:1000px;clip-path:polygon(0 0,100% 0,78% 100%,0 100%)}
+#s2 .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,26,46,.82),rgba(6,26,46,0) 40%)}
+#s2 .cap{left:72px;top:858px;color:var(--cream)}
+#s2 .k{left:700px;top:128px}
+#s2 h2{left:700px;top:166px}
+#s2 .stats{left:700px;top:486px;width:668px;display:grid;grid-template-columns:1fr 1fr;gap:26px 44px}
+.stat{border-top:2px solid var(--hair);padding-top:14px}
+.stat b{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:112px;line-height:.87;color:var(--yellow);font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:10px;font-size:17px;line-height:1.38;color:var(--mist);max-width:290px}
+/* ===== 3 · la idea ===== */
+#s3 svg{position:absolute;inset:0;opacity:.16}
+#s3 .k{left:72px;top:128px}
+#s3 .big{left:72px;top:178px;font-size:114px;line-height:.9}
+#s3 .big .it{font-size:.88em;padding-top:.06em}
+#s3 .mq{top:806px;border-color:var(--navy)}
+/* ===== 4 · el recorrido ===== */
+#s4 .k{left:72px;top:118px}
+#s4 h2{left:72px;top:152px;font-size:92px;white-space:nowrap}
+#s4 h2 .it{display:inline}
+#s4 svg{position:absolute;inset:0}
+#s4 .fl{position:absolute;width:270px;margin-left:-135px;text-align:center}
+#s4 .fl b{display:block;font:600 14px/1 var(--f-m);letter-spacing:.14em;color:var(--yellow);margin-bottom:8px}
+#s4 .fl strong{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:31px;line-height:.98;text-transform:uppercase}
+#s4 .fl span{display:block;margin-top:8px;font-size:16px;line-height:1.35;color:var(--mist)}
+#s4 .mk{font:600 13px/1 var(--f-m);letter-spacing:.16em;color:var(--mist)}
+#s4 .run{position:absolute;left:0;top:0;width:0;height:0;offset-path:path("M 150 420 H 1290 C 1400 420 1400 700 1290 700 H 150");offset-rotate:0deg;offset-distance:0%}
+#s4 .run i{position:absolute;left:-30px;top:-62px;width:60px;height:60px;background:var(--yellow);-webkit-mask:url(img-horse.png) center/contain no-repeat;mask:url(img-horse.png) center/contain no-repeat}
+@keyframes course{0%{offset-distance:0%;scale:1 1}44%{offset-distance:44%;scale:1 1}50%{scale:1 1}50.01%{scale:-1 1}56%{offset-distance:56%;scale:-1 1}100%{offset-distance:100%;scale:-1 1}}
+@keyframes canter{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-9px) rotate(-6deg)}}
+#s4.on .run{animation:course 20s linear 1.6s infinite both}
+#s4.on .run i{animation:canter .62s ease-in-out infinite}
+/* ===== 6 · rodaje ===== */
+#s5 .k{left:72px;top:118px}
+#s5 h2{left:72px;top:152px}
+#s5 .sub{left:72px;top:254px;font-size:58px;line-height:1}
+#s5 .days{left:72px;top:352px;width:850px;display:grid;grid-template-columns:1fr 1fr;gap:0 34px}
+.day5 h3{font:600 13px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);border-bottom:2px solid var(--yellow);padding-bottom:10px}
+.r5{display:grid;grid-template-columns:74px 1fr;gap:0 8px;padding:6px 0;border-bottom:1px solid var(--hair);min-height:67px;align-content:center}
+.r5 time{font:500 17px/1.55 var(--f-m);color:var(--yellow)}
+.r5 strong{font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:27px;line-height:1;text-transform:uppercase}
+.r5 span{grid-column:2;font-size:15px;line-height:1.3;color:var(--mist);margin-top:3px}
+.r5.lunch{min-height:42px}
+.r5.lunch strong{font-size:20px;color:var(--mist);font-weight:600}
+.oth5{margin-top:14px;border:1px dashed rgba(249,247,242,.4);padding:26px 24px;display:flex;flex-direction:column;gap:6px;background:repeating-linear-gradient(-45deg,rgba(249,247,242,.04) 0 12px,transparent 12px 24px)}
+.oth5 small{font:500 15px/1 var(--f-m);letter-spacing:.08em;color:var(--mist)}
+.oth5 strong{font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:64px;line-height:.9;text-transform:uppercase;margin-top:8px}
+.oth5 em{font-family:var(--f-s);font-style:italic;font-weight:500;font-size:34px;line-height:1.05;color:var(--yellow);letter-spacing:-.02em}
+.oth5 span{font-size:16px;line-height:1.38;color:var(--mist);margin-top:10px}
+#s5 .ph{left:960px;top:0;width:480px;height:1000px;clip-path:polygon(104px 0,100% 0,100% 100%,0 100%)}
+#s5 .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,26,46,.85),rgba(6,26,46,.1) 45%,rgba(6,26,46,.45))}
+#s5 .rec{right:72px;top:112px;display:flex;align-items:center;gap:10px;font:600 15px/1 var(--f-m);letter-spacing:.1em}
+#s5 .rec i{width:11px;height:11px;border-radius:50%;background:#ff3b30;animation:blink 1.4s steps(2) infinite}
+#s5 .vf{left:1100px;top:330px;width:250px;height:250px}
+#s5 .vf i{position:absolute;width:30px;height:30px;border:2px solid var(--yellow)}
+#s5 .vf i:nth-child(1){left:0;top:0;border-width:2px 0 0 2px}#s5 .vf i:nth-child(2){right:0;top:0;border-width:2px 2px 0 0}#s5 .vf i:nth-child(3){left:0;bottom:0;border-width:0 0 2px 2px}#s5 .vf i:nth-child(4){right:0;bottom:0;border-width:0 2px 2px 0}
+@keyframes vf{0%,100%{transform:scale(1)}50%{transform:scale(.9)}}
+#s5.on .vf{animation:a-zoom .9s var(--ease) 1s both,vf 3s ease-in-out 2s infinite}
+#s5.pre .vf{opacity:0}
+#s5 .gear{right:72px;top:820px;text-align:right;color:var(--cream)}
+</style>
+
+<!-- 1 · PORTADA -->
+<section class="s on" id="s1" data-tone="dark" data-sec="Portada" aria-label="Portada">
+  <div class="phc"><img class="kb" src="img-cover.jpg" alt="Jinete del club saltando un obstáculo delante de la casa club" style="object-position:46% 40%"></div>
+  <svg viewBox="0 0 1440 1000" aria-hidden="true"><line class="draw" style="--len:1030;--d:2900" x1="750" y1="0" x2="560" y2="1000" stroke="#FFC428" stroke-width="4"/><line class="draw" style="--len:1030;--d:3100" x1="772" y1="0" x2="582" y2="1000" stroke="#F9F7F2" stroke-opacity=".35" stroke-width="1"/></svg>
+  <img class="abs logo" data-a="fade" src="img-logo.png" alt="Logo del Club Hípico La Gubía">
+  <p class="abs k" data-a="up" style="--d:900">Club Hípico La Gubía · Propuesta 2026</p>
+  <h1 class="abs h"><span class="ln"><i style="--d:1100">Compra-venta</i></span><span class="ln"><i style="--d:1300">de caballos</i></span><span class="ln it"><em style="--d:1650">el sistema completo</em></span></h1>
+  <p class="abs p" data-a="up" style="--d:2000">Anuncios, VSL en varios idiomas, web con ficha para cada caballo, WhatsApp con IA y un CRM para vuestros closers.</p>
+  <div class="abs tag" data-a="right" style="--d:3600"><b>Rodaje</b> Lun 23 nov 2026 · Bunyola</div>
+</section>
+
+<!-- 2 · PUNTO DE PARTIDA -->
+<section class="s" id="s2" data-tone="dark" data-sec="Punto de partida" aria-label="Punto de partida">
+  <div class="ph" data-a="left"><img class="kb" src="img-club.jpg" alt="La casa club al pie de la Serra de Tramuntana" style="object-position:42% 50%"></div>
+  <p class="abs cap mono" data-a="fade" style="--d:700">Bunyola · Serra de Tramuntana</p>
+  <p class="abs k" data-a="up" style="--d:200">Punto de partida</p>
+  <h2 class="abs h h2"><span class="ln"><i style="--d:280">Veinte años</i></span><span class="ln"><i style="--d:420">eligiendo</i></span><span class="ln it"><em style="--d:620">caballos</em></span></h2>
+  <div class="abs stats">
+    <div class="stat" data-a="up" style="--d:700"><b data-count="2005" data-from="1985">2005</b><span>Fundado en Bunyola por David Usón y Malen Jaume, jinetes internacionales de salto</span></div>
+    <div class="stat" data-a="up" style="--d:820"><b data-count="100" data-pre="+">+100</b><span>caballos y ponis comprados en los últimos 10 años</span></div>
+    <div class="stat" data-a="up" style="--d:940"><b data-count="6">6</b><span>países de compra: España, Bélgica, Austria, Francia, Irlanda y Reino Unido</span></div>
+    <div class="stat" data-a="up" style="--d:1060"><b data-count="18">18</b><span>países de origen de más de 1.000 alumnos</span></div>
+  </div>
+</section>
+
+<!-- 3 · LA IDEA -->
+<section class="s" id="s3" data-tone="yel" data-sec="La idea" aria-label="La idea">
+  <svg viewBox="0 0 1440 1000" aria-hidden="true"><line x1="0" y1="0" x2="1440" y2="1000" stroke="#0A2E50" stroke-width="2"/><line x1="1440" y1="0" x2="0" y2="1000" stroke="#0A2E50" stroke-width="2"/></svg>
+  <p class="abs k" data-a="up" style="--d:150">La idea</p>
+  <p class="abs h big"><span class="ln"><i style="--d:250">El ojo de David,</i></span><span class="ln"><i style="--d:450">convertido en un sistema</i></span><span class="ln"><i style="--d:750">que vende caballos</i></span><span class="ln"><i style="--d:1000">las 24 horas,</i></span><span class="ln it"><em style="--d:1300">en cualquier idioma.</em></span></p>
+  <div class="mq" data-a="fade" style="--d:1500"><div>Anuncios → VSL → Web con fichas → WhatsApp + IA → CRM closers → Email → Venta → </div></div>
+</section>
+
+<!-- 4 · EL RECORRIDO -->
+<section class="s" id="s4" data-tone="dark" data-sec="Lo que montamos" aria-label="Las ocho piezas del embudo">
+  <p class="abs k" data-a="up" style="--d:150">Lo que montamos</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Ocho piezas, <em class="it">un solo recorrido</em></i></span></h2>
+  <svg viewBox="0 0 1440 1000" aria-hidden="true">
+    <path class="draw" style="--len:2700;--d:500" d="M 150 420 H 1290 C 1400 420 1400 700 1290 700 H 150" fill="none" stroke="#F9F7F2" stroke-opacity=".3" stroke-width="2"/>
+    <g fill="#F9F7F2">
+      <g data-a="fade" style="--d:800"><rect x="237" y="360" width="6" height="62"/><rect x="297" y="360" width="6" height="62"/><rect x="243" y="370" width="54" height="7" fill="#FFC428"/><rect x="243" y="388" width="54" height="7"/></g>
+      <g data-a="fade" style="--d:950"><rect x="547" y="360" width="6" height="62"/><rect x="607" y="360" width="6" height="62"/><rect x="553" y="370" width="54" height="7" fill="#FFC428"/><rect x="553" y="388" width="54" height="7"/></g>
+      <g data-a="fade" style="--d:1100"><rect x="857" y="360" width="6" height="62"/><rect x="917" y="360" width="6" height="62"/><rect x="863" y="370" width="54" height="7" fill="#FFC428"/><rect x="863" y="388" width="54" height="7"/></g>
+      <g data-a="fade" style="--d:1250"><rect x="1167" y="360" width="6" height="62"/><rect x="1227" y="360" width="6" height="62"/><rect x="1173" y="370" width="54" height="7" fill="#FFC428"/><rect x="1173" y="388" width="54" height="7"/></g>
+      <g data-a="fade" style="--d:1400"><rect x="1167" y="640" width="6" height="62"/><rect x="1227" y="640" width="6" height="62"/><rect x="1173" y="650" width="54" height="7" fill="#FFC428"/><rect x="1173" y="668" width="54" height="7"/></g>
+      <g data-a="fade" style="--d:1550"><rect x="857" y="640" width="6" height="62"/><rect x="917" y="640" width="6" height="62"/><rect x="863" y="650" width="54" height="7" fill="#FFC428"/><rect x="863" y="668" width="54" height="7"/></g>
+      <g data-a="fade" style="--d:1700"><rect x="547" y="640" width="6" height="62"/><rect x="607" y="640" width="6" height="62"/><rect x="553" y="650" width="54" height="7" fill="#FFC428"/><rect x="553" y="668" width="54" height="7"/></g>
+      <g data-a="fade" style="--d:1850"><rect x="237" y="640" width="6" height="62"/><rect x="297" y="640" width="6" height="62"/><rect x="243" y="650" width="54" height="7" fill="#FFC428"/><rect x="243" y="668" width="54" height="7"/></g>
+    </g>
+  </svg>
+  <p class="abs mk" style="left:72px;top:392px" data-a="fade">SALIDA</p>
+  <p class="abs mk" style="left:72px;top:672px" data-a="fade">META</p>
+  <div class="fl" style="left:270px;top:444px;--d:800" data-a="up"><b>01</b><strong>Rodaje y<br>reel de prueba</strong><span>Un día de rodaje y el método para viralizar</span></div>
+  <div class="fl" style="left:580px;top:444px;--d:950" data-a="up"><b>02</b><strong>12 anuncios,<br>12 ángulos</strong><span>Cada uno ataca un motivo de compra distinto</span></div>
+  <div class="fl" style="left:890px;top:444px;--d:1100" data-a="up"><b>03</b><strong>VSL multi-idioma</strong><span>Historia, método y compra. ES, EN y el resto con IA</span></div>
+  <div class="fl" style="left:1200px;top:444px;--d:1250" data-a="up"><b>04</b><strong>Web con ficha<br>por caballo</strong><span>Catálogo, vídeo, pedigrí y captación del lead</span></div>
+  <div class="fl" style="left:1200px;top:724px;--d:1400" data-a="up"><b>05</b><strong>29 plantillas<br>de WhatsApp</strong><span>La ficha técnica de cada caballo, al instante</span></div>
+  <div class="fl" style="left:890px;top:724px;--d:1550" data-a="up"><b>06</b><strong>Setter con IA</strong><span>Responde y cualifica las 24 horas</span></div>
+  <div class="fl" style="left:580px;top:724px;--d:1700" data-a="up"><b>07</b><strong>CRM para closers</strong><span>Trazabilidad, llamadas y transcripción</span></div>
+  <div class="fl" style="left:270px;top:724px;--d:1850" data-a="up"><b>08</b><strong>Email automático</strong><span>Secuencias que se disparan solas</span></div>
+  <div class="run" aria-hidden="true"><i></i></div>
+</section>
+
+<!-- 5 · PORTADILLA 01 -->
+<section class="s sec" id="sA" data-tone="dark" data-sec="El contenido" aria-label="Primera parte: el contenido">
+  <img class="bg kb" src="img-walk.jpg" alt="El equipo del club reconociendo el recorrido" style="object-position:50% 35%">
+  <div class="sh"></div>
+  <p class="num" data-a="right" style="--d:150" aria-hidden="true">01</p>
+  <p class="abs k" data-a="up" style="--d:300">Primera parte</p>
+  <h1 class="abs h"><span class="ln"><i style="--d:400">El contenido</i></span><span class="ln it"><em style="--d:800">rodaje, reels y 12 anuncios</em></span></h1>
+  <div class="mq" data-a="fade" style="--d:1200"><div>Rodaje lun 23 nov · Reel de prueba · Contenido diario · 12 ángulos · Meta Ads · </div></div>
+</section>
+
+<!-- 6 · RODAJE -->
+<section class="s" id="s5" data-tone="dark" data-sec="Rodaje" aria-label="Día de rodaje">
+  <div class="ph" data-a="fade"><img class="kb" src="img-stable.jpg" alt="Pasillo de las cuadras del club" style="object-position:52% 50%"></div>
+  <p class="abs k" data-a="up" style="--d:150">Lunes 23 de noviembre · Bunyola</p>
+  <h2 class="abs h h2"><span class="ln"><i style="--d:250">Un día de rodaje</i></span></h2>
+  <p class="abs it sub" data-a="up" style="--d:560">de 10:30 a 18:30</p>
+  <div class="abs days">
+    <div class="day5" data-a="up" style="--d:650"><h3>Lunes 23 · Compra-venta de caballos</h3>
+      <div class="r5"><time>10:30</time><strong>Caballos en venta</strong><span>Paso, trote, galope y salto, uno a uno, para las fichas</span></div>
+      <div class="r5"><time>12:30</time><strong>David, a cámara</strong><span>Historia y método para el VSL, en español y en inglés</span></div>
+      <div class="r5 lunch"><time>14:00</time><strong>Comida</strong></div>
+      <div class="r5"><time>15:00</time><strong>12 anuncios</strong><span>Hooks a cámara y escenas de cada ángulo</span></div>
+      <div class="r5"><time>16:15</time><strong>Reel de prueba</strong><span>Lo grabamos con el club y enseñamos el método</span></div>
+      <div class="r5"><time>16:45</time><strong>Hora dorada</strong><span>Saltos a contraluz a 120 fps. El sol se pone a las 17:20</span></div>
+      <div class="r5"><time>17:30</time><strong>Cuadras y recursos</strong><span>Interiores, detalles y planos de apoyo hasta las 18:30</span></div>
+    </div>
+    <div class="day5" data-a="up" style="--d:850"><h3>Martes 24 · Otro proyecto</h3>
+      <div class="oth5"><small>10:30 – 18:30</small><strong>Academia</strong><em>Universidad High Ticket</em><span>Proyecto aparte. Solo queda reservado en el calendario.</span></div>
+    </div>
+  </div>
+  <div class="abs rec" data-a="fade" style="--d:900"><i></i>REC <span id="tc5">10:30:00</span></div>
+  <div class="abs vf" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <p class="abs gear mono" data-a="fade" style="--d:1300">2 cámaras 4K · Dron<br>Gimbal · Micros inalámbricos</p>
+</section>
+
+<script>
+(()=>{const H=window.__hooks=window.__hooks||{};const P=()=>window.__P;
+let t1;H.s1={enter(){P().form({x:1030,y:480,size:620,delay:200,color:'255,196,40'});clearTimeout(t1);t1=setTimeout(()=>P().release(),3500)},leave(){clearTimeout(t1);P().release()}};
+H.s3={enter(){P().form({x:1190,y:560,size:360,delay:700,color:'10,46,80'})},leave(){P().release()}};
+let t5;H.s5={enter(){const el=document.getElementById('tc5');let s=10*3600+30*60;clearInterval(t5);t5=setInterval(()=>{s+=47;if(s>18*3600+30*60)s=10*3600+30*60;
+  const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;el.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(x).padStart(2,'0')},90)},leave(){clearInterval(t5)}};
+})();
+</script>
+
+<style>
+
+/* ===== 6 · reel ===== */
+#s6 .sim{left:96px;top:100px;width:372px;height:792px}
+#s6 .k{left:548px;top:118px}
+#s6 h2{left:548px;top:152px;font-size:90px}
+#s6 .frs{left:548px;top:344px;width:820px}
+.fr6{display:grid;grid-template-columns:122px 1fr;align-items:center;height:60px;border-top:1px solid var(--hair);padding-left:16px;position:relative;opacity:.42;transition:opacity .35s}
+.fr6:last-child{border-bottom:1px solid var(--hair)}
+.fr6::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:5px;background:var(--yellow);transform:scaleY(0);transition:transform .35s var(--ease)}
+.fr6.act{opacity:1}.fr6.act::before{transform:scaleY(1)}
+.fr6 time{font:500 18px/1 var(--f-m);color:var(--yellow)}
+.fr6 span{font-size:21px;line-height:1.25}
+#s6 .kpis{left:548px;top:738px;width:820px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.kpi6{border-left:1px solid var(--hair);padding:2px 0 2px 22px}
+.kpi6:first-child{border-left:0;padding-left:0}
+.kpi6 b{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:70px;line-height:.9;color:var(--yellow)}
+.kpi6 span{display:block;margin-top:8px;font:500 13px/1.35 var(--f-m);letter-spacing:.1em;text-transform:uppercase;color:var(--mist)}
+/* ===== 7–8 · anuncios ===== */
+.ads-k{left:72px;top:118px}
+.ads-h{left:72px;top:152px;font-size:82px;white-space:nowrap}
+.ads-h .it{display:inline}
+.ads{left:72px;top:288px;display:grid;grid-template-columns:repeat(6,204px);gap:14.4px}
+.ad{position:relative;width:204px;height:362px;overflow:hidden;background:#000;border-radius:16px;color:#fff;box-shadow:0 18px 40px rgba(6,26,46,.28)}
+.ad img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.ad::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5),rgba(0,0,0,0) 24%,rgba(0,0,0,0) 40%,rgba(3,14,26,.9) 82%)}
+.ad .bars{position:absolute;left:8px;right:8px;top:8px;display:flex;gap:3px;z-index:2}
+.ad .bars i{flex:1;height:2px;background:rgba(255,255,255,.4);overflow:hidden}
+.ad .bars i:first-child::after{content:"";display:block;height:100%;background:#fff;transform-origin:left}
+.s.on .ad .bars i:first-child::after{animation:a-growx 7s linear 1.2s both}
+.ad .acc{position:absolute;left:9px;top:17px;display:flex;align-items:center;gap:6px;z-index:2;font:700 10px/1.15 var(--f-t)}
+.ad .acc i{width:22px;height:22px;border-radius:50%;background:var(--navy) url(img-logo.png) center/62% no-repeat;border:1px solid rgba(255,255,255,.5);flex:none}
+.ad .acc small{display:block;font-weight:400;font-size:9px;opacity:.85}
+.ad .hk{position:absolute;left:12px;right:12px;bottom:50px;z-index:2;font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:25px;line-height:.98;text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.ad .hk em{font-style:normal;color:var(--yellow)}
+.ad .cta{position:absolute;left:10px;right:10px;bottom:11px;height:28px;border-radius:7px;background:rgba(255,255,255,.94);color:#0A2E50;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font:700 10.5px/1 var(--f-t)}
+.adl{margin-top:14px}
+.adl b{font:600 13px/1 var(--f-m);letter-spacing:.12em;color:var(--wine)}
+.adl strong{display:block;margin-top:6px;font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:28px;line-height:.98;text-transform:uppercase}
+.adl span{display:flex;align-items:center;gap:7px;margin-top:8px;font:500 11.5px/1 var(--f-m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.adl span i{width:9px;height:9px;border-radius:50%;flex:none}
+.t-f i{background:var(--cool)}.t-t i{background:var(--yellow);box-shadow:0 0 0 1px rgba(10,46,80,.35)}.t-c i{background:var(--hot)}
+/* ===== 9 · organigrama ===== */
+#s9 .k{left:72px;top:118px}
+#s9 h2{left:72px;top:152px;font-size:88px;white-space:nowrap}
+#s9 h2 .it{display:inline}
+#s9 svg{position:absolute;inset:0}
+.ch9{position:absolute;top:288px;width:264px;font:600 13px/1 var(--f-m);letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);border-bottom:1px solid var(--hair);padding-bottom:10px}
+.nd{position:absolute;width:264px;background:#0B2742;border:1px solid var(--hair);padding:0 18px;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.nd strong{font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:29px;line-height:.98;text-transform:uppercase}
+.nd span{font-size:15px;line-height:1.3;color:var(--mist)}
+.nd.hi{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+.nd.hi span{color:rgba(10,46,80,.8)}
+/* ===== 10 · VSL ===== */
+#s10 .k{left:72px;top:118px}
+#s10 h2{left:72px;top:152px;font-size:88px}
+#s10 .pl{left:72px;top:332px;width:800px;height:450px;background:#000;overflow:hidden;box-shadow:0 30px 60px rgba(10,46,80,.28)}
+#s10 .pl img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 30%}
+#s10 .pl::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,14,26,.35),rgba(3,14,26,0) 30%,rgba(3,14,26,.85))}
+#s10 .chip{position:absolute;left:18px;top:18px;z-index:2;background:var(--yellow);color:var(--navy);font:600 13px/1 var(--f-m);letter-spacing:.1em;text-transform:uppercase;padding:9px 12px}
+#s10 .play{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px;border-radius:50%;background:rgba(249,247,242,.94);z-index:2;display:flex;align-items:center;justify-content:center;transition:opacity .5s,transform .5s}
+#s10 .play::after{content:"";border-left:30px solid var(--navy);border-top:19px solid transparent;border-bottom:19px solid transparent;margin-left:8px}
+#s10 .play.off{opacity:0;transform:scale(1.5)}
+#s10 .sub{position:absolute;left:40px;right:40px;bottom:66px;z-index:2;text-align:center;color:#fff;font:600 23px/1.25 var(--f-t);text-shadow:0 2px 10px rgba(0,0,0,.8);transition:opacity .3s}
+#s10 .bar{position:absolute;left:18px;right:18px;bottom:18px;z-index:2;display:flex;align-items:center;gap:14px;color:#fff;font:500 13px/1 var(--f-m)}
+#s10 .segs{flex:1;display:flex;gap:4px;height:6px}
+#s10 .segs i{background:rgba(255,255,255,.3);position:relative;overflow:hidden}
+#s10 .segs i b{position:absolute;inset:0;background:var(--yellow);transform-origin:left;transform:scaleX(0)}
+#s10 .langs{left:72px;top:804px;display:flex;gap:8px;align-items:center}
+#s10 .lg{font:600 13px/1 var(--f-m);letter-spacing:.1em;padding:10px 14px;border:1.5px solid var(--navy);transition:all .3s}
+#s10 .lg small{font-size:10px;opacity:.6;margin-left:6px}
+#s10 .lg.on{background:var(--navy);color:var(--cream)}
+#s10 .note{left:72px;top:862px;color:var(--ink-soft)}
+#s10 .chs{left:920px;top:332px;width:448px}
+.ch10{display:grid;grid-template-columns:78px 1fr;gap:0 6px;padding:11px 0 11px 14px;border-top:1px solid var(--hair-d);position:relative;opacity:.5;transition:opacity .35s}
+.ch10:last-child{border-bottom:1px solid var(--hair-d)}
+.ch10::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:5px;background:var(--wine);transform:scaleY(0);transition:transform .35s var(--ease)}
+.ch10.act{opacity:1}.ch10.act::before{transform:scaleY(1)}
+.ch10 time{font:500 15px/1.5 var(--f-m);color:var(--wine)}
+.ch10 strong{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:29px;line-height:1;text-transform:uppercase}
+.ch10 span{display:block;margin-top:3px;font-size:15.5px;line-height:1.3;color:var(--ink-soft)}
+
+</style>
+
+<style>
+/* ===== reel en móvil 3D ===== */
+#s6 .flw{left:96px;top:100px;width:372px;height:792px}
+#s6 .flw .sim{position:absolute;inset:0;left:0;top:0;width:100%;height:100%}
+/* ===== contenido diario ===== */
+#sV .k{left:72px;top:118px}
+#sV h2{left:72px;top:152px;font-size:88px}
+#sV .steps{left:72px;top:336px;width:1296px;display:grid;grid-template-columns:repeat(3,1fr);gap:0 30px}
+.stV{border-top:2px solid var(--navy);padding-top:14px;display:grid;grid-template-columns:54px 1fr}
+.stV b{font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:54px;line-height:.9;color:var(--wine)}
+.stV strong{font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:34px;line-height:.98;text-transform:uppercase;align-self:center}
+.stV span{grid-column:2;margin-top:8px;font-size:17px;line-height:1.38;color:var(--ink-soft)}
+#sV .week{left:72px;top:548px;width:1296px;display:grid;grid-template-columns:repeat(7,1fr);gap:14px}
+.dy{position:relative;height:296px;overflow:hidden;background:#000;color:#fff;border-radius:14px;box-shadow:0 16px 36px rgba(10,46,80,.25)}
+.dy img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.dy::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0) 30%,rgba(3,14,26,.92))}
+.dy b{position:absolute;left:10px;top:10px;z-index:2;background:var(--yellow);color:var(--navy);font:600 12px/1 var(--f-m);letter-spacing:.1em;padding:6px 8px}
+.dy strong{position:absolute;left:12px;right:10px;bottom:38px;z-index:2;font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:25px;line-height:.98;text-transform:uppercase}
+.dy span{position:absolute;left:12px;bottom:13px;z-index:2;font:500 12px/1 var(--f-m);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.dy i{position:absolute;left:0;bottom:0;height:3px;background:var(--yellow);z-index:3;width:100%;transform-origin:left}
+#sV.on .dy i{animation:a-growx 5s linear infinite;animation-delay:calc(var(--d)*1ms)}
+/* ===== 12 anuncios en el móvil ===== */
+#s7 .k{left:72px;top:118px}
+#s7 h2{left:72px;top:152px;font-size:76px}
+#s7 .info{left:72px;top:356px;width:400px}
+#s7 .inum{font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:190px;line-height:.82;color:transparent;-webkit-text-stroke:2.5px var(--yellow);font-variant-numeric:tabular-nums}
+#s7 .iname{font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:62px;line-height:.92;text-transform:uppercase;margin-top:14px}
+#s7 .ihook{font-family:var(--f-s);font-style:italic;font-weight:500;font-size:29px;line-height:1.14;color:var(--yellow);margin-top:14px;letter-spacing:-.01em;min-height:100px}
+#s7 .imeta{display:flex;align-items:center;gap:9px;margin-top:14px;font:500 13px/1 var(--f-m);letter-spacing:.1em;text-transform:uppercase;color:var(--mist)}
+#s7 .imeta i{width:10px;height:10px;border-radius:50%}
+#s7 .idots{display:flex;gap:6px;margin-top:22px}
+#s7 .idots i{flex:1;height:4px;background:var(--hair);transition:background .4s}
+#s7 .idots i.on{background:var(--yellow)}
+@keyframes isw{from{opacity:0;transform:translateY(18px)}}
+#s7 .info.sw>*{animation:isw .6s var(--ease) both}
+#s7 .info.sw>*:nth-child(2){animation-delay:.07s}#s7 .info.sw>*:nth-child(3){animation-delay:.14s}#s7 .info.sw>*:nth-child(4){animation-delay:.21s}
+#s7 .ringw{left:450px;top:250px;width:990px;height:660px;perspective:1800px;perspective-origin:50% 46%}
+#ring{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;transform:translateZ(-540px) rotateY(0deg);transition:transform 1.15s cubic-bezier(.6,0,.15,1)}
+.rc{position:absolute;left:-118px;top:-210px;width:236px;height:420px;transform:rotateY(calc(var(--i)*30deg)) translateZ(540px);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.rc .ad{width:236px;height:420px;border-radius:26px;box-shadow:none}
+.rc .ad::before{content:"";position:absolute;inset:0;background:#061A2E;opacity:.6;z-index:4;transition:opacity .6s}
+.rc.act .ad::before{opacity:0}
+.rc .ad .acc{top:44px}.rc .ad .bars{top:34px;left:12px;right:12px}
+.rc .ad .hk{font-size:30px;bottom:62px;left:14px;right:14px}
+.rc .ad .cta{height:34px;font-size:12px;bottom:14px;left:12px;right:12px}
+.rc .ad .i2{opacity:0}
+.hk .w{display:inline-block}
+@keyframes adz{from{transform:scale(1.02)}to{transform:scale(1.2)}}
+@keyframes adcut{0%,50%{opacity:0;transform:scale(1.3)}54%{opacity:1;transform:scale(1.22)}100%{opacity:1;transform:scale(1.05)}}
+@keyframes wpop{from{opacity:0;transform:translateY(16px) scale(.8)}}
+@keyframes ctaup{from{transform:translateY(54px);opacity:0}}
+@keyframes ctap{50%{transform:scale(1.05)}}
+.rc.act .ad .i1{animation:adz 3.4s linear both}
+.rc.act .ad .i2{animation:adcut 3.4s linear both}
+.rc.act .hk .w{animation:wpop .5s var(--ease) both;animation-delay:calc(.75s + var(--w)*105ms)}
+.rc.act .cta{animation:ctaup .6s var(--ease) 2s both,ctap 1s ease-in-out 2.6s infinite}
+.rc.act .bars i:first-child::after{animation:a-growx 3.3s linear both}
+#s7 .pb{position:absolute;left:50%;top:50%;width:266px;height:450px;margin:-225px 0 0 -133px;border:15px solid #0a0a0b;border-radius:42px;box-shadow:0 0 0 2px #2c2c2e,0 40px 90px rgba(0,0,0,.65);z-index:5;pointer-events:none}
+#s7 .pb::before{content:"";position:absolute;left:50%;top:6px;width:76px;height:22px;margin-left:-38px;background:#0a0a0b;border-radius:14px}
+/* ===== los 12, de un vistazo ===== */
+#s8 .g12{left:72px;top:282px;display:grid;grid-template-columns:repeat(6,200px);gap:14px 19.2px}
+#s8 .ad{width:200px;height:250px;border-radius:12px}
+#s8 .ad .hk{font-size:21px;bottom:14px;left:12px;right:12px}
+#s8 .ad .acc{top:10px}
+.l12{display:flex;align-items:center;gap:8px;margin-top:9px;height:26px;white-space:nowrap}
+.l12 b{font:600 12px/1 var(--f-m);color:var(--wine)}
+.l12 strong{font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:23px;line-height:1;text-transform:uppercase}
+.l12 i{width:9px;height:9px;border-radius:50%;margin-left:auto;flex:none}
+#s8 .adleg{top:880px;border-top:0;padding-top:0}
+/* ===== organigrama con cámara ===== */
+#s9 .camw{position:absolute;left:0;top:270px;width:1440px;height:662px;overflow:hidden}
+#s9 .cam{position:absolute;left:0;top:-270px;width:1440px;height:1000px;transform-origin:0 0}
+@keyframes cam{0%,11%{transform:translate(373px,-376px) scale(1.7)}24%,35%{transform:translate(-212px,-386px) scale(1.7)}48%,59%{transform:translate(-796px,-376px) scale(1.7)}72%,82%{transform:translate(-1381px,-386px) scale(1.7)}96%,100%{transform:translate(0,0) scale(1)}}
+#s9.on .cam{animation:cam 9.6s cubic-bezier(.65,0,.35,1) both}
+#s9 .cam svg{position:absolute;inset:0}
+/* ===== VSL que cambia de contenido ===== */
+.vsc{position:absolute;inset:0;opacity:0;transition:opacity .6s;overflow:hidden;background:#061A2E}
+.vsc.on{opacity:1}
+.vsc>img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.vsc.on>img{animation:kb 9s cubic-bezier(.2,.6,.3,1) both}
+.vchips{position:absolute;left:22px;top:66px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;z-index:1}
+.vchips span,.vrow span{background:rgba(6,26,46,.9);color:var(--yellow);border:1px solid rgba(255,196,40,.6);font:600 13px/1 var(--f-m);letter-spacing:.1em;text-transform:uppercase;padding:9px 12px}
+.vsc.on .vchips span,.vsc.on .vrow span{animation:a-left .6s var(--ease) both;animation-delay:calc(.5s + var(--j)*.42s)}
+.vrow{position:absolute;left:22px;right:22px;bottom:60px;display:flex;gap:8px;z-index:1}
+.vstamp{position:absolute;right:26px;top:26px;border:3px solid var(--yellow);color:var(--yellow);font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:44px;line-height:.9;text-transform:uppercase;padding:10px 14px;transform:rotate(-6deg);z-index:1}
+.vsc.on .vstamp{animation:a-zoom .6s var(--ease) .6s both}
+.vh{position:absolute;top:60px;font:600 12px/1 var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);z-index:1}
+.vrx{position:absolute;left:24px;top:86px;width:330px;height:216px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.vrx i{background:radial-gradient(ellipse at 50% 40%,rgba(210,225,240,.5),rgba(120,140,160,.14) 55%,rgba(20,30,40,.6));border:1px solid rgba(180,200,220,.3)}
+.vsc.on .vrx i{animation:a-zoom .5s var(--ease) both;animation-delay:calc(.3s + var(--j)*.12s)}
+.vok{position:absolute;left:24px;top:314px;display:flex;gap:8px;z-index:1}
+.vok span{background:#25D366;color:#04121F;font:600 12px/1 var(--f-m);letter-spacing:.08em;text-transform:uppercase;padding:8px 10px}
+.vsc.on .vok span{animation:a-up .5s var(--ease) both;animation-delay:calc(1.4s + var(--j)*.3s)}
+.vped{position:absolute;left:400px;top:86px;width:376px;height:250px}
+.vped svg{position:absolute;inset:0}
+.vped div{position:absolute;background:var(--cream);color:var(--navy);border-left:4px solid var(--yellow);padding:6px 9px;font-size:13.5px;font-weight:700;line-height:1.15;width:150px}
+.vped div small{display:block;font:500 9.5px/1.5 var(--f-m);letter-spacing:.1em;color:var(--wine)}
+.vped div.me{background:var(--yellow);border-left-color:var(--cream)}
+.vsc.on .vped div{animation:a-left .5s var(--ease) both;animation-delay:calc(2.6s + var(--j)*.28s)}
+.vsc.on .vped path{stroke-dasharray:200;animation:draw 1s var(--ease) both;--len:200;animation-delay:calc(2.9s + var(--j)*.28s)}
+.vwa{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);text-align:center;z-index:1;width:520px}
+.vwa img{position:static;width:74px;height:auto;display:block;margin:0 auto 16px}
+.vwa b{display:inline-block;background:#25D366;color:#04121F;font-weight:800;font-size:22px;padding:18px 28px}
+.vsc.on .vwa b{animation:ctap 1.2s ease-in-out infinite}
+#s10 .chs{top:326px}
+.ch10{padding:9px 0 9px 14px}
+#s10 .langs{top:800px}
+#s10 .note{top:858px}
+</style>
+
+<!-- 7 · REEL DE PRUEBA -->
+<section class="s" id="s6" data-tone="dark" data-sec="Reel de prueba" aria-label="Reel de prueba, frame a frame">
+  <div class="abs flw float"><div class="sim p3d" data-sim="reel"></div></div>
+  <p class="abs k" data-a="up" style="--d:150">Reel de prueba · os enseñamos el método</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">El ojo del experto,</i></span><span class="ln it"><em style="--d:600">en 30 segundos</em></span></h2>
+  <div class="abs frs" data-a="fade" style="--d:600">
+    <div class="fr6"><time>0–2 s</time><span>Hook: primer plano y pregunta en pantalla</span></div>
+    <div class="fr6"><time>2–6 s</time><span>David revisa los aplomos; check animado</span></div>
+    <div class="fr6"><time>6–12 s</time><span>Trote a cámara: movimiento elástico y simétrico</span></div>
+    <div class="fr6"><time>12–18 s</time><span>Salto a 120 fps, a contraluz</span></div>
+    <div class="fr6"><time>18–24 s</time><span>Carácter: una alumna junior lo monta tranquila</span></div>
+    <div class="fr6"><time>24–30 s</time><span>«Comenta CABALLO» y le llega la ficha por WhatsApp</span></div>
+  </div>
+  <div class="abs kpis" data-a="up" style="--d:900">
+    <div class="kpi6"><b>&gt; 30 %</b><span>pasan de los 3 s</span></div>
+    <div class="kpi6"><b>&gt; 50 %</b><span>de vista media</span></div>
+    <div class="kpi6"><b>72 h</b><span>y el patrón ganador marca los siguientes reels</span></div>
+  </div>
+</section>
+
+<!-- 8 · CONTENIDO DIARIO -->
+<section class="s" id="sV" data-tone="light" data-sec="Contenido diario" aria-label="Del reel de prueba al contenido diario">
+  <p class="abs k" data-a="up" style="--d:150">Viralización · del reel de prueba al contenido diario</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Un reel cada día,</i></span><span class="ln it"><em style="--d:600">hecho por un experto</em></span></h2>
+  <div class="abs steps">
+    <div class="stV" data-a="up" style="--d:700"><b>1</b><strong>Os enseñamos el método</strong><span>El reel de prueba es la clase práctica: gancho, ritmo y llamada a la acción.</span></div>
+    <div class="stV" data-a="up" style="--d:850"><b>2</b><strong>Buscamos al experto</strong><span>Seleccionamos a la persona que grabará y publicará el contenido del club cada día.</span></div>
+    <div class="stV" data-a="up" style="--d:1000"><b>3</b><strong>Lo formamos nosotros</strong><span>Guion, formato y medición. El patrón que gana marca el reel del día siguiente.</span></div>
+  </div>
+  <div class="abs week" id="week"></div>
+</section>
+
+<!-- 9 · 12 ANUNCIOS EN EL MÓVIL -->
+<section class="s" id="s7" data-tone="dark" data-sec="12 anuncios" aria-label="Los 12 anuncios, tal como se verán en el móvil">
+  <p class="abs k" data-a="up" style="--d:150">12 anuncios · así se verán en el móvil</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Doce anuncios,</i></span><span class="ln it"><em style="--d:560">doce ganchos</em></span></h2>
+  <div class="abs info" id="ainfo" data-a="up" style="--d:800"><p class="inum" id="ai-n">01</p><p class="iname" id="ai-t">Autoridad</p><p class="ihook" id="ai-h"></p><p class="imeta" id="ai-m"></p><div class="idots" id="ai-d"></div></div>
+  <div class="abs ringw" data-a="fade" style="--d:500"><div id="ring"></div><div class="pb"></div></div>
+</section>
+
+<!-- 10 · LOS 12, DE UN VISTAZO -->
+<section class="s" id="s8" data-tone="light" data-sec="12 anuncios" aria-label="Los 12 anuncios de un vistazo">
+  <p class="abs k ads-k" data-a="up" style="--d:150">Los 12, de un vistazo · formato feed</p>
+  <h2 class="abs h ads-h"><span class="ln"><i style="--d:250">Un ángulo para cada <em class="it">motivo de compra</em></i></span></h2>
+  <div class="abs g12" id="g12"></div>
+  <div class="abs adleg" data-a="fade" style="--d:1400"><span><i style="background:var(--cool)"></i>Frío: aún no nos conoce</span><span><i style="background:var(--yellow);box-shadow:0 0 0 1px rgba(10,46,80,.35)"></i>Templado: ya nos ha visto</span><span><i style="background:var(--hot)"></i>Caliente: vio el VSL</span><b>Los 12 llevan al mismo VSL</b></div>
+</section>
+
+<!-- 11 · PORTADILLA 02 -->
+<section class="s sec" id="sB" data-tone="dark" data-sec="El embudo" aria-label="Segunda parte: el embudo">
+  <img class="bg kb" src="img-white.jpg" alt="Un caballo tordo saltando en la pista del club" style="object-position:50% 45%">
+  <div class="sh"></div>
+  <p class="num" data-a="right" style="--d:150" aria-hidden="true">02</p>
+  <p class="abs k" data-a="up" style="--d:300">Segunda parte</p>
+  <h1 class="abs h"><span class="ln"><i style="--d:400">El embudo</i></span><span class="ln it"><em style="--d:750">VSL, web y ficha por caballo</em></span></h1>
+  <div class="mq" data-a="fade" style="--d:1200"><div>Organigrama · VSL en 6 idiomas · Web con catálogo · Ficha por caballo · Chequeo veterinario · Pedigrí · </div></div>
+</section>
+
+<!-- 12 · ORGANIGRAMA -->
+<section class="s" id="s9" data-tone="dark" data-sec="Organigrama" aria-label="Organigrama del embudo">
+  <p class="abs k" data-a="up" style="--d:150">Organigrama del embudo</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Del anuncio a la venta, <em class="it">sin fugas</em></i></span></h2>
+  <div class="camw"><div class="cam">
+  <p class="ch9" style="left:72px" data-a="fade">01 · Atraer</p>
+  <p class="ch9" style="left:416px;--d:2200" data-a="fade">02 · Convertir</p>
+  <p class="ch9" style="left:760px;--d:4400" data-a="fade">03 · Seguir</p>
+  <p class="ch9" style="left:1104px;--d:6700" data-a="fade">04 · Cerrar</p>
+  <svg viewBox="0 0 1440 1000" data-a="fade" aria-label="Los anuncios y los reels llevan a la web con el VSL; el lead captado pasa a WhatsApp, email, CRM y retargeting; de ahí a la cita y a la venta. El retargeting devuelve a los anuncios 09 a 12.">
+    <g fill="none" stroke="#FFC428" stroke-width="2" stroke-opacity=".7">
+      <path class="draw" style="--len:200;--d:1300" d="M336 388 C376 388 376 495 416 495"/>
+      <path class="draw" style="--len:200;--d:1400" d="M336 512 C376 512 376 495 416 495"/>
+      <path class="draw" style="--len:240;--d:1500" d="M336 636 C376 636 376 495 416 495"/>
+      <path class="draw" style="--len:330;--d:1600" d="M336 760 C376 760 376 495 416 495"/>
+      <path class="draw" style="--len:60;--d:3000" d="M548 570 V626"/>
+      <path class="draw" style="--len:360;--d:3700" d="M680 680 C720 680 720 388 760 388"/>
+      <path class="draw" style="--len:240;--d:3800" d="M680 680 C720 680 720 512 760 512"/>
+      <path class="draw" style="--len:200;--d:3900" d="M680 680 C720 680 720 636 760 636"/>
+      <path class="draw" style="--len:200;--d:4000" d="M680 680 C720 680 720 760 760 760"/>
+      <path class="draw" style="--len:200;--d:5900" d="M1024 388 C1064 388 1064 470 1104 470"/>
+      <path class="draw" style="--len:200;--d:6000" d="M1024 512 C1064 512 1064 495 1104 495"/>
+      <path class="draw" style="--len:200;--d:6100" d="M1024 636 C1064 636 1064 520 1104 520"/>
+      <path class="draw" style="--len:60;--d:7500" d="M1236 570 V626"/>
+      <path data-a="fade" style="--d:9200" d="M892 814 V862 H204 V820" stroke-dasharray="8 8" stroke-opacity=".5"/>
+      <path data-a="fade" style="--d:9200" d="M196 830 L204 816 L212 830" stroke-opacity=".8"/>
+    </g>
+    <g fill="#F9F7F2" data-a="fade" style="--d:9400">
+      <circle r="5"><animateMotion dur="2.2s" begin="0s" repeatCount="indefinite" path="M336 388 C376 388 376 495 416 495"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="0.5s" repeatCount="indefinite" path="M336 512 C376 512 376 495 416 495"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="0.2s" repeatCount="indefinite" path="M336 636 C376 636 376 495 416 495"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="0.8s" repeatCount="indefinite" path="M336 760 C376 760 376 495 416 495"/></circle>
+      <circle r="5"><animateMotion dur="1.4s" begin="0.4s" repeatCount="indefinite" path="M548 570 V626"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="0.6s" repeatCount="indefinite" path="M680 680 C720 680 720 388 760 388"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="0.9s" repeatCount="indefinite" path="M680 680 C720 680 720 512 760 512"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="1.2s" repeatCount="indefinite" path="M680 680 C720 680 720 636 760 636"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="1.5s" repeatCount="indefinite" path="M680 680 C720 680 720 760 760 760"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="1.0s" repeatCount="indefinite" path="M1024 388 C1064 388 1064 470 1104 470"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="1.4s" repeatCount="indefinite" path="M1024 512 C1064 512 1064 495 1104 495"/></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="1.7s" repeatCount="indefinite" path="M1024 636 C1064 636 1064 520 1104 520"/></circle>
+      <circle r="5" fill="#FFC428"><animateMotion dur="1.4s" begin="1.8s" repeatCount="indefinite" path="M1236 570 V626"/></circle>
+    </g>
+  </svg>
+  <div class="nd" style="left:72px;top:334px;height:108px;--d:350" data-a="left"><strong>Reels orgánicos</strong><span>«Comenta CABALLO»</span></div>
+  <div class="nd" style="left:72px;top:458px;height:108px;--d:500" data-a="left"><strong>Anuncios 01–04</strong><span>Autoridad y confianza</span></div>
+  <div class="nd" style="left:72px;top:582px;height:108px;--d:650" data-a="left"><strong>Anuncios 05–08</strong><span>Deseo y estilo de vida</span></div>
+  <div class="nd" style="left:72px;top:706px;height:108px;--d:800" data-a="left"><strong>Anuncios 09–12</strong><span>Prueba social y oferta</span></div>
+  <div class="nd hi" style="left:416px;top:420px;height:150px;--d:2300" data-a="zoom"><strong>Web con VSL</strong><span>ES · EN · más idiomas con IA, catálogo y ficha por caballo</span></div>
+  <div class="nd" style="left:416px;top:626px;height:108px;--d:3100" data-a="up"><strong>Lead captado</strong><span>Formulario o mensaje directo</span></div>
+  <div class="nd" style="left:760px;top:334px;height:108px;--d:4500" data-a="right"><strong>WhatsApp</strong><span>29 plantillas + setter IA</span></div>
+  <div class="nd" style="left:760px;top:458px;height:108px;--d:4650" data-a="right"><strong>Email</strong><span>Secuencia automática</span></div>
+  <div class="nd" style="left:760px;top:582px;height:108px;--d:4800" data-a="right"><strong>CRM closers</strong><span>Llamada y transcripción</span></div>
+  <div class="nd" style="left:760px;top:706px;height:108px;--d:4950" data-a="right"><strong>Retargeting</strong><span>Según % de VSL visto</span></div>
+  <div class="nd" style="left:1104px;top:420px;height:150px;--d:6800" data-a="right"><strong>Videollamada, visita o prueba</strong><span>La agenda el closer</span></div>
+  <div class="nd hi" style="left:1104px;top:626px;height:120px;--d:7600" data-a="zoom"><strong>Venta</strong><span>Reserva y entrega</span></div>
+  </div></div>
+</section>
+
+<!-- 13 · VSL -->
+<section class="s" id="s10" data-tone="light" data-sec="El VSL" aria-label="El VSL">
+  <p class="abs k" data-a="up" style="--d:150">El VSL · lo que todo comprador pide ver</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Seis capítulos</i></span><span class="ln it"><em style="--d:560">que venden por vosotros</em></span></h2>
+  <div class="abs pl" data-a="zoom" style="--d:500">
+    <div class="vsc on"><img src="img-cover.jpg" alt="" style="object-position:46% 35%"></div>
+    <div class="vsc"><img src="img-club.jpg" alt="" style="object-position:42% 55%"><p class="vstamp">Desde<br>2005</p></div>
+    <div class="vsc"><img src="img-check.jpg" alt="" style="object-position:42% 45%"><div class="vchips"><span style="--j:0">✓ Aplomos</span><span style="--j:1">✓ Movimiento</span><span style="--j:2">✓ Técnica de salto</span><span style="--j:3">✓ Carácter</span></div></div>
+    <div class="vsc">
+      <p class="vh" style="left:24px">Chequeo veterinario · 18 radiografías</p>
+      <div class="vrx"><i style="--j:0"></i><i style="--j:1"></i><i style="--j:2"></i><i style="--j:3"></i><i style="--j:4"></i><i style="--j:5"></i></div>
+      <div class="vok"><span style="--j:0">✓ Pre-compra</span><span style="--j:1">✓ Piroplasmosis negativo</span></div>
+      <p class="vh" style="left:400px">Pedigrí · 3 generaciones</p>
+      <div class="vped"><svg viewBox="0 0 376 250" fill="none" stroke="#FFC428" stroke-width="2"><path style="--j:1" d="M110 125 C140 125 120 62 150 62"/><path style="--j:2" d="M110 125 C140 125 120 188 150 188"/></svg>
+        <div class="me" style="left:0;top:104px;width:110px;--j:0"><small>CABALLO</small>Quórum LG</div>
+        <div style="left:150px;top:18px;--j:1"><small>PADRE</small>Diamant de Semilly</div>
+        <div style="left:150px;top:80px;--j:2"><small>ABUELO PATERNO</small>Le Tot de Semilly</div>
+        <div style="left:150px;top:150px;--j:3"><small>MADRE</small>Quintana</div>
+        <div style="left:150px;top:212px;--j:4"><small>ABUELO MATERNO</small>Chacco-Blue</div></div>
+      <div class="vrow"><span style="--j:8">Vídeo sin cortes</span><span style="--j:9">Resultados</span><span style="--j:10">Carácter</span></div>
+    </div>
+    <div class="vsc"><img src="img-bay.jpg" alt="" style="object-position:30% 45%"><div class="vchips"><span style="--j:0">Prueba en Mallorca</span><span style="--j:1">Transporte a toda Europa</span><span style="--j:2">IVA y papeles en regla</span></div></div>
+    <div class="vsc"><div class="vwa"><img src="img-logo.png" alt=""><b>Recibir la ficha por WhatsApp</b></div></div>
+    <span class="chip" id="v-chip">Cap. 1 · El gancho</span>
+    <div class="play" id="v-play"></div>
+    <p class="sub" id="v-sub">Lo que nadie te cuenta antes de comprar un caballo</p>
+    <div class="bar"><span>▶</span><div class="segs" id="v-segs"><i style="flex:40"><b></b></i><i style="flex:60"><b></b></i><i style="flex:70"><b></b></i><i style="flex:120"><b></b></i><i style="flex:70"><b></b></i><i style="flex:40"><b></b></i></div><span id="v-time">0:00 / 6:40</span><span id="v-lang">ES</span></div>
+  </div>
+  <div class="abs langs" id="v-langs" data-a="up" style="--d:800"><span class="lg on">ES<small>grabado</small></span><span class="lg">EN<small>grabado</small></span><span class="lg">DE<small>IA</small></span><span class="lg">FR<small>IA</small></span><span class="lg">NL<small>IA</small></span><span class="lg">IT<small>IA</small></span><span class="lg">+</span></div>
+  <p class="abs note mono" data-a="fade" style="--d:1000">Con IA: la voz de David, labios sincronizados y subtítulos</p>
+  <div class="abs chs" id="v-chs" data-a="fade" style="--d:700">
+    <div class="ch10 act"><time>00:00</time><div><strong>El gancho</strong><span>Lo que nadie te cuenta antes de comprar un caballo</span></div></div>
+    <div class="ch10"><time>00:40</time><div><strong>Quiénes somos</strong><span>David, jinete internacional, y el club desde 2005</span></div></div>
+    <div class="ch10"><time>01:40</time><div><strong>Cómo elegimos</strong><span>Más de 100 caballos en 6 países: lo que mira David</span></div></div>
+    <div class="ch10"><time>02:50</time><div><strong>Lo que verás de cada caballo</strong><span>Chequeo veterinario, radiografías, pedigrí, vídeo sin cortes, resultados y carácter: lo mismo que enseñan ehorses, HorseQuest y Equirodi</span></div></div>
+    <div class="ch10"><time>04:50</time><div><strong>Cómo se compra</strong><span>Prueba en Mallorca, transporte, IVA y papeles</span></div></div>
+    <div class="ch10"><time>06:00</time><div><strong>Tu siguiente paso</strong><span>Pide la ficha y la recibes por WhatsApp</span></div></div>
+  </div>
+</section>
+
+<script>
+(()=>{const H=window.__hooks=window.__hooks||{},g=id=>document.getElementById(id);
+/* ---- datos de los 12 anuncios ---- */
+const ADS=[
+['Autoridad','20 años eligiendo caballos para <em>jinetes internacionales</em>','team.jpg','38% 40%','club.jpg','Reel','f','Frío'],
+['Criterio','+100 caballos en 6 países. <em>Esto es lo que miramos</em>','check.jpg','44% 50%','grey.jpg','Carrusel','f','Frío'],
+['Riesgo','El caballo equivocado cuesta <em>más que su precio</em>','stable.jpg','50% 50%','check.jpg','UGC','t','Templado'],
+['Transparencia','Vídeo sin cortes, pedigrí y radiografías. <em>Antes de que preguntes</em>','trot.jpg','40% 50%','bay.jpg','Demo','t','Templado'],
+['Familia','El pony perfecto para tu hijo existe. <em>Y lo conocemos</em>','pony.jpg','62% 50%','kids.jpg','Reel','f','Frío'],
+['Ambición','Tu próximo caballo para <em>subir a 1,20 m</em>','bay.jpg','30% 50%','david.jpg','Reel','f','Frío'],
+['Mallorca','Ven a probarlo con <em>la Tramuntana de fondo</em>','arena.jpg','60% 50%','club.jpg','Dron','f','Frío'],
+['Internacional','Buying a horse in Spain? <em>We speak your language</em>','david.jpg','52% 40%','cover.jpg','EN · DE','f','Frío'],
+['Prueba social','Así encontramos el caballo de <em>[nombre del comprador]</em>','kids.jpg','50% 40%','pony.jpg','UGC','t','Templado'],
+['Día a día','Un día en La Gubía: <em>de la cuadra a la pista</em>','line.jpg','40% 50%','stable.jpg','Serie','t','Templado'],
+['Vendedores','¿Vendes tu caballo? Lo presentamos a <em>compradores de toda Europa</em>','grey.jpg','38% 50%','doma.jpg','Carrusel','f','Frío'],
+['Caballo de la semana','Su ficha completa, <em>directa a tu WhatsApp</em>','white.jpg','48% 50%','bay.jpg','Retargeting','c','Caliente']];
+const TC={f:'var(--cool)',t:'var(--yellow)',c:'var(--hot)'},pad=n=>String(n).padStart(2,'0');
+const words=h=>{let w=0;return h.replace(/(<em>|<\/em>)|([^\s<]+)/g,(m,tag,word)=>tag?tag:'<span class="w" style="--w:'+(w++)+'">'+word+'</span>')};
+const adHTML=(a,i,ring)=>'<div class="ad"><img class="'+(ring?'i1':'kb2')+'" src="img-'+a[2]+'" alt="" style="object-position:'+a[3]+'">'+(ring?'<img class="i2" src="img-'+a[4]+'" alt="">':'')+
+  '<div class="bars"><i></i><i></i><i></i></div><div class="acc"><i></i><span>clubhipicolagubia<small>'+(i===7?'Sponsored':'Publicidad')+'</small></span></div><p class="hk">'+(ring?words(a[1]):a[1])+'</p>'+(ring?'<div class="cta">'+(i===7?'Learn more':i===11?'Recibir ficha':'Más información')+'<span>›</span></div>':'')+'</div>';
+g('ring').innerHTML=ADS.map((a,i)=>'<div class="rc" style="--i:'+i+'">'+adHTML(a,i,true)+'</div>').join('');
+g('ai-d').innerHTML=ADS.map(()=>'<i></i>').join('');
+g('g12').innerHTML=ADS.map((a,i)=>'<div data-a="up" style="--d:'+(450+i*70)+'">'+adHTML(a,i,false)+'<div class="l12"><b>'+pad(i+1)+'</b><strong>'+a[0]+'</strong><i style="background:'+TC[a[6]]+'" title="'+a[7]+'"></i></div></div>').join('');
+let t7,idx=0;
+function ad(i){const k=((i%12)+12)%12,a=ADS[k],info=g('ainfo');
+  g('ring').style.transform='translateZ(-540px) rotateY('+(-i*30)+'deg)';
+  [...g('ring').children].forEach(c=>c.classList.remove('act'));
+  setTimeout(()=>{const c=g('ring').children[k];if(c)c.classList.add('act')},650);
+  g('ai-n').textContent=pad(k+1);g('ai-t').textContent=a[0];g('ai-h').innerHTML='«'+a[1].replace(/<\/?em>/g,'')+'»';
+  g('ai-m').innerHTML='<i style="background:'+TC[a[6]]+'"></i>'+a[5]+' · público '+a[7].toLowerCase();
+  [...g('ai-d').children].forEach((d,j)=>d.classList.toggle('on',j<=k));
+  info.classList.remove('sw');void info.offsetWidth;info.classList.add('sw')}
+H.s7={enter(){idx=0;clearInterval(t7);g('ring').style.transition='none';ad(0);void g('ring').offsetWidth;g('ring').style.transition='';t7=setInterval(()=>ad(++idx),3900)},leave(){clearInterval(t7)}};
+/* ---- contenido diario ---- */
+const WK=[['LUN','Caballo de la semana','white.jpg','48% 45%'],['MAR','Lo que mira David','check.jpg','42% 45%'],['MIÉ','Un día en la cuadra','stable.jpg','50% 50%'],['JUE','Salto a cámara lenta','bay.jpg','30% 45%'],['VIE','Al trote, sin cortes','trot.jpg','40% 50%'],['SÁB','Día de concurso','david.jpg','52% 40%'],['DOM','Preguntas de compradores','team.jpg','40% 35%']];
+g('week').innerHTML=WK.map((d,i)=>'<div class="dy" data-a="flip" style="--d:'+(1150+i*130)+'"><img class="kb2" src="img-'+d[2]+'" alt="" style="object-position:'+d[3]+'"><b>'+d[0]+'</b><strong>'+d[1]+'</strong><span>▶ <u style="text-decoration:none" id="vw'+i+'">0</u></span><i style="--d:'+(1800+i*400)+'"></i></div>').join('');
+let tV;const fm=n=>n>=1000?(n/1000).toFixed(1).replace('.',',')+' mil':String(n);
+H.sV={enter(){const v=WK.map((_,i)=>400+i*90);clearInterval(tV);tV=setInterval(()=>{v.forEach((x,i)=>{v[i]=x+Math.round(40+Math.random()*260*(1+(i%3)));const el=g('vw'+i);if(el)el.textContent=fm(v[i])})},180)},leave(){clearInterval(tV)}};
+/* ---- la lista sigue al reel ---- */
+H.s6={enter(s){const rows=[...s.querySelectorAll('.fr6')],host=s.querySelector('[data-sim]');host.onframe=i=>rows.forEach((r,j)=>r.classList.toggle('act',j===i))}};
+/* ---- VSL: el contenido cambia en cada capítulo ---- */
+let t10;const CH=[0,40,100,170,290,360,400],CN=['El gancho','Quiénes somos','Cómo elegimos','Lo que verás de cada caballo','Cómo se compra','Tu siguiente paso'],LG=['ES','EN','DE','FR','NL','IT'];
+const SUB=[
+['Lo que nadie te cuenta antes de comprar un caballo','What nobody tells you before buying a horse','Was dir vor dem Pferdekauf niemand erzählt','Ce que personne ne vous dit avant d’acheter un cheval','Wat niemand je vertelt voordat je een paard koopt','Quello che nessuno ti dice prima di comprare un cavallo'],
+['Llevamos desde 2005 formando jinetes en Mallorca','We have been training riders in Mallorca since 2005','Seit 2005 bilden wir auf Mallorca Reiter aus','Nous formons des cavaliers à Majorque depuis 2005','Sinds 2005 leiden wij ruiters op in Mallorca','Dal 2005 formiamo cavalieri a Maiorca'],
+['Así elige David cada caballo, en seis países','This is how David chooses each horse, in six countries','So wählt David jedes Pferd aus, in sechs Ländern','Voici comment David choisit chaque cheval, dans six pays','Zo kiest David elk paard, in zes landen','Così David sceglie ogni cavallo, in sei paesi'],
+['De cada caballo verás el chequeo veterinario y su pedigrí','For every horse you see the vet check and its pedigree','Zu jedem Pferd siehst du den Tierarzt-Check und die Abstammung','Pour chaque cheval : la visite vétérinaire et le pedigree','Van elk paard zie je de keuring en de afstamming','Di ogni cavallo vedi la visita veterinaria e il pedigree'],
+['Pruébalo en Mallorca; del transporte nos ocupamos nosotros','Try the horse in Mallorca; we take care of the transport','Probiere es auf Mallorca; um den Transport kümmern wir uns','Essayez-le à Majorque ; nous nous occupons du transport','Probeer het op Mallorca; wij regelen het transport','Provalo a Maiorca; al trasporto pensiamo noi'],
+['Pide la ficha completa y la recibes por WhatsApp','Ask for the full file and get it on WhatsApp','Fordere das komplette Exposé an und erhalte es per WhatsApp','Demandez la fiche complète et recevez-la sur WhatsApp','Vraag het volledige dossier aan en ontvang het via WhatsApp','Chiedi la scheda completa e ricevila su WhatsApp']];
+H.s10={enter(s){const segs=[...g('v-segs').children],rows=[...g('v-chs').children],lgs=[...g('v-langs').children],sc=[...s.querySelectorAll('.vsc')],sb=g('v-sub');
+  let t=0,n=0,li=0,cc=-1;g('v-play').classList.remove('off');clearInterval(t10);
+  const say=()=>{sb.style.opacity=0;setTimeout(()=>{sb.textContent=SUB[Math.max(cc,0)][li];sb.style.opacity=1},260)};
+  const lang=i=>{li=i;lgs.forEach((e,j)=>e.classList.toggle('on',j===i));g('v-lang').textContent=LG[i];say()};
+  const chap=c=>{cc=c;sc.forEach((e,j)=>e.classList.toggle('on',j===c));rows.forEach((r,j)=>r.classList.toggle('act',j===c));g('v-chip').textContent='Cap. '+(c+1)+' · '+CN[c];sb.style.display=c===3?'none':'';say()};
+  chap(0);lang(0);
+  t10=setInterval(()=>{n++;if(n===10)g('v-play').classList.add('off');if(n<10)return;t+=1.6;if(t>=400)t=0;
+    let c=0;while(c<5&&t>=CH[c+1])c++;if(c!==cc)chap(c);
+    segs.forEach((e,j)=>{e.firstChild.style.transform='scaleX('+(j<c?1:j>c?0:(t-CH[c])/(CH[c+1]-CH[c]))+')'});
+    const sec=Math.floor(t);g('v-time').textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')+' / 6:40';
+    if(n%24===0)lang((li+1)%LG.length)},100)},leave(){clearInterval(t10)}};
+})();
+</script>
+
+<style>
+/* ===== 11–12 · renders ===== */
+.rk{left:72px;top:118px}
+.rh{left:72px;top:152px;font-size:80px;white-space:nowrap}
+.rh .it{display:inline}
+.rsim{left:72px;top:262px;width:1296px;height:640px}
+/* ===== 13 · campos de la ficha ===== */
+#s13 .ph{left:0;top:0;width:560px;height:1000px;clip-path:polygon(0 0,100% 0,80% 100%,0 100%)}
+#s13 .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,26,46,.6),rgba(6,26,46,0) 40%)}
+#s13 .cap{left:72px;top:858px;color:var(--cream)}
+#s13 .k{left:610px;top:118px}
+#s13 h2{left:610px;top:152px;font-size:80px}
+#s13 .grid{left:610px;top:348px;width:758px;display:grid;grid-template-columns:1fr 1fr;gap:0 36px}
+.f13{border-top:1px solid var(--hair-d);padding:13px 0 14px;display:grid;grid-template-columns:40px 1fr;min-height:118px;align-content:start}
+.f13 b{font:600 13px/1.9 var(--f-m);letter-spacing:.1em;color:var(--wine)}
+.f13 strong{font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:31px;line-height:1;text-transform:uppercase}
+.f13 span{grid-column:2;margin-top:6px;font-size:16.5px;line-height:1.36;color:var(--ink-soft)}
+.f13.x{background:var(--navy);color:var(--cream);padding-left:16px;padding-right:12px;border-top-color:var(--navy)}
+.f13.x b{color:var(--yellow)}.f13.x span{color:var(--mist)}
+#s13 .ref{left:610px;top:852px;color:var(--ink-soft)}
+/* ===== 14 · captación ===== */
+#s14 .k{left:72px;top:118px}
+#s14 h2{left:72px;top:152px;font-size:84px}
+#s14 .tl{left:72px;top:336px;width:760px}
+#s14 .rail{left:72px;top:336px;width:3px;height:496px;background:var(--hair)}
+#s14 .rail i{display:block;width:100%;height:100%;background:var(--yellow);transform-origin:top}
+#s14.on .rail i{animation:a-growy 3.9s linear .7s both}
+.st14{display:grid;grid-template-columns:118px 1fr;align-items:center;height:62px;padding-left:26px;border-bottom:1px solid var(--hair)}
+.st14 time{font:500 19px/1 var(--f-m);color:var(--yellow)}
+.st14 span{font-size:21px;line-height:1.25}
+#s14 .card{left:900px;top:150px;width:468px;background:var(--cream);color:var(--navy);padding:26px 28px 22px}
+#s14 .card::before{content:"";position:absolute;left:0;top:0;right:0;height:8px;background:repeating-linear-gradient(90deg,var(--yellow) 0 22px,var(--navy) 22px 44px)}
+#s14 .card h3{font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:60px;line-height:.9;text-transform:uppercase;margin:10px 0 14px}
+.kv{display:grid;grid-template-columns:128px 1fr;align-items:baseline;padding:11px 0;border-top:1px solid var(--hair-d)}
+.kv b{font:600 12px/1 var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--wine)}
+.kv span{font-size:18.5px;font-weight:600;line-height:1.2}
+.kv .hot{display:inline-block;background:var(--hot);color:#fff;font:600 12px/1 var(--f-m);font-style:normal;letter-spacing:.08em;padding:5px 8px;margin-left:8px;vertical-align:2px}
+/* ===== 15 · 29 plantillas ===== */
+#s15 .n29{left:52px;top:128px;font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:560px;line-height:.8;letter-spacing:-.03em;color:var(--navy)}
+#s15 .t29{left:72px;top:610px;width:470px;font-size:76px}
+#s15 .cols{left:590px;top:150px;width:778px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 30px}
+.g15{margin-bottom:22px}
+.g15 h4{font:600 13px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--wine);border-bottom:2px solid var(--navy);padding-bottom:8px;margin-bottom:6px}
+.g15 p{font-size:18.5px;line-height:1.58;font-weight:500;white-space:nowrap}
+.g15 p b{font:500 13px/1 var(--f-m);opacity:.55;margin-right:9px}
+#s15 .note{background:var(--navy);color:var(--cream);padding:16px 18px;font-size:16.5px;line-height:1.4}
+#s15 .note b{display:block;font:600 12px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px}
+/* ===== 16 · WhatsApp ===== */
+#s16 .flw{left:104px;top:84px;width:400px;height:826px}
+#s16 .flw .sim{position:absolute;left:0;top:0;width:100%;height:100%}
+#s16 .k{left:590px;top:118px}
+#s16 h2{left:590px;top:152px;font-size:88px}
+#s16 .pts{left:590px;top:352px;width:778px}
+.pt16{display:grid;grid-template-columns:70px 1fr;align-items:center;height:84px;border-top:1px solid var(--hair);padding-left:16px;position:relative;opacity:.42;transition:opacity .4s}
+.pt16:last-child{border-bottom:1px solid var(--hair)}
+.pt16::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:5px;background:var(--ok);transform:scaleY(0);transition:transform .4s var(--ease)}
+.pt16.act{opacity:1}.pt16.act::before{transform:scaleY(1)}
+.pt16 b{font:500 18px/1 var(--f-m);color:var(--yellow)}
+.pt16 span{font-size:22px;line-height:1.28}
+#s16 .live{left:590px;top:806px;display:flex;align-items:center;gap:10px;color:var(--mist)}
+#s16 .live i{width:10px;height:10px;border-radius:50%;background:var(--ok);animation:blink 1.4s steps(2) infinite}
+</style>
+
+<!-- 11 · RENDER DE LA WEB -->
+<section class="s" id="s11" data-tone="dark" data-sec="La web" aria-label="Render de la web">
+  <p class="abs k rk" data-a="up" style="--d:150">Render de la web · maqueta con datos de ejemplo</p>
+  <h2 class="abs h rh"><span class="ln"><i style="--d:250">Cada visita, <em class="it">convertida en un lead</em></i></span></h2>
+  <div class="lap" style="--d:450"><div class="lap-s"><div class="rsim" data-sim="web"></div></div><div class="lap-b"></div></div>
+</section>
+
+<!-- 12 · RENDER DE LA FICHA -->
+<section class="s" id="s12" data-tone="dark" data-sec="La ficha" aria-label="Render de la ficha de un caballo">
+  <p class="abs k rk" data-a="up" style="--d:150">Render de la ficha · caballo y datos de ejemplo</p>
+  <h2 class="abs h rh"><span class="ln"><i style="--d:250">Cada caballo, <em class="it">con su propia ficha</em></i></span></h2>
+  <div class="lap" style="--d:450"><div class="lap-s"><div class="rsim" data-sim="ficha"></div></div><div class="lap-b"></div></div>
+</section>
+
+<!-- 13 · QUÉ LLEVA CADA FICHA -->
+<section class="s" id="s13" data-tone="light" data-sec="La ficha" aria-label="Campos de la ficha">
+  <div class="ph" data-a="left"><img class="kb" src="img-doma.jpg" alt="Jinete de doma clásica sobre un caballo oscuro" style="object-position:62% 50%"></div>
+  <p class="abs cap mono" data-a="fade" style="--d:700">Foto: Club Hípico La Gubía</p>
+  <p class="abs k" data-a="up" style="--d:150">Estudiado en los portales líderes</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Lo que un comprador</i></span><span class="ln it"><em style="--d:400">quiere ver</em></span></h2>
+  <div class="abs grid">
+    <div class="f13" data-a="up" style="--d:550"><b>01</b><strong>Identificación</strong><span>Raza y libro, sexo, edad, capa, alzada, UELN y chip</span></div>
+    <div class="f13" data-a="up" style="--d:620"><b>02</b><strong>Pedigrí</strong><span>Árbol de 3 generaciones, línea materna, valoración genética</span></div>
+    <div class="f13" data-a="up" style="--d:690"><b>03</b><strong>Deporte</strong><span>Disciplina, nivel, resultados RFHE y FEI, potencial</span></div>
+    <div class="f13" data-a="up" style="--d:760"><b>04</b><strong>Carácter</strong><span>Temperamento, jinete ideal, carga, herrado, sin vicios</span></div>
+    <div class="f13" data-a="up" style="--d:830"><b>05</b><strong>Salud</strong><span>Pre-compra, radiografías, piroplasmosis, vacunas</span></div>
+    <div class="f13" data-a="up" style="--d:900"><b>06</b><strong>Vídeo</strong><span>Montado sin cortes, en libertad, salto y concurso</span></div>
+    <div class="f13" data-a="up" style="--d:970"><b>07</b><strong>Comercial</strong><span>Precio o rango, IVA deducible, prueba y transporte</span></div>
+    <div class="f13 x" data-a="up" style="--d:1040"><b>+</b><strong>Extra La Gubía</strong><span>La ficha sale sola por WhatsApp y email, traducida con IA</span></div>
+  </div>
+  <p class="abs ref mono" data-a="fade" style="--d:1300">ehorses · HorseQuest · Equirodi · subastas alemanas · LG ANCCE</p>
+</section>
+
+<!-- PORTADILLA 03 -->
+<section class="s sec" id="sC" data-tone="dark" data-sec="El seguimiento" aria-label="Tercera parte: el seguimiento">
+  <img class="bg kb" src="img-grey.jpg" alt="Un entrenador del club habla con una amazona" style="object-position:45% 40%">
+  <div class="sh"></div>
+  <p class="num" data-a="right" style="--d:150" aria-hidden="true">03</p>
+  <p class="abs k" data-a="up" style="--d:300">Tercera parte</p>
+  <h1 class="abs h"><span class="ln"><i style="--d:400">El seguimiento</i></span><span class="ln it"><em style="--d:850">mensajes, IA, CRM y email</em></span></h1>
+  <div class="mq" data-a="fade" style="--d:1200"><div>29 plantillas de Meta · Setter con IA 24/7 · CRM para closers · Llamadas transcritas · Email automático · </div></div>
+</section>
+
+<!-- 14 · CAPTACIÓN -->
+<section class="s" id="s14" data-tone="dark" data-sec="Captación" aria-label="Captación del lead">
+  <p class="abs k" data-a="up" style="--d:150">Captación del lead</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Segundo a segundo,</i></span><span class="ln it"><em style="--d:400">después del formulario</em></span></h2>
+  <div class="abs rail"><i></i></div>
+  <div class="abs tl">
+    <div class="st14" data-a="left" style="--d:700"><time>0 s</time><span>Deja sus datos en la web o comenta CABALLO</span></div>
+    <div class="st14" data-a="left" style="--d:1180"><time>+1 s</time><span>Entra en el CRM con anuncio, ángulo e idioma</span></div>
+    <div class="st14" data-a="left" style="--d:1660"><time>+2 s</time><span>WhatsApp con la ficha técnica de su caballo</span></div>
+    <div class="st14" data-a="left" style="--d:2140"><time>+3 s</time><span>Email de bienvenida con el VSL completo</span></div>
+    <div class="st14" data-a="left" style="--d:2620"><time>+10 s</time><span>El setter IA responde 24/7 y cualifica</span></div>
+    <div class="st14" data-a="left" style="--d:3100"><time>+60 s</time><span>Aviso al closer si el lead está caliente</span></div>
+    <div class="st14" data-a="left" style="--d:3580"><time>+24 h</time><span>Sin respuesta: plantilla de seguimiento y email</span></div>
+    <div class="st14" data-a="left" style="--d:4060"><time>+72 h</time><span>Retargeting con los anuncios 09–12</span></div>
+  </div>
+  <div class="abs card" data-a="right" style="--d:600">
+    <p class="mono" style="color:var(--wine)">Lo que el closer sabe · ejemplo</p>
+    <h3>Laura M.</h3>
+    <div class="kv" data-a="fade" style="--d:1180"><b>Origen</b><span>Anuncio 03 · Riesgo</span></div>
+    <div class="kv" data-a="fade" style="--d:1400"><b>Idioma</b><span>Español · Madrid</span></div>
+    <div class="kv" data-a="fade" style="--d:1660"><b>VSL visto</b><span>78 %</span></div>
+    <div class="kv" data-a="fade" style="--d:2140"><b>Fichas</b><span>Quórum LG, abierta 3 veces</span></div>
+    <div class="kv" data-a="fade" style="--d:2620"><b>Setter</b><span>Junior · 1,20 m · 30–40 k€</span></div>
+    <div class="kv" data-a="fade" style="--d:3100"><b>Puntos</b><span>87<i class="hot">CALIENTE</i></span></div>
+    <div class="kv" data-a="fade" style="--d:3580"><b>Fase</b><span>Videollamada agendada</span></div>
+    <div class="kv" data-a="fade" style="--d:4060"><b>Llamadas</b><span>Grabadas y transcritas</span></div>
+  </div>
+</section>
+
+<!-- 15 · 29 PLANTILLAS -->
+<section class="s" id="s15" data-tone="yel" data-sec="WhatsApp" aria-label="29 plantillas de Meta">
+  <p class="abs n29" data-a="left" style="--d:200" data-count="29" data-delay="300">29</p>
+  <p class="abs h t29"><span class="ln"><i style="--d:500">plantillas</i></span><span class="ln"><i style="--d:600">de Meta</i></span><span class="ln it"><em style="--d:760">preconfiguradas</em></span></p>
+  <div class="abs cols">
+    <div data-a="up" style="--d:500">
+      <div class="g15"><h4>Bienvenida</h4><p><b>01</b>Bienvenida con vídeo</p><p><b>02</b>¿Qué caballo buscas?</p><p><b>03</b>Welcome (English)</p></div>
+      <div class="g15"><h4>Ficha por caballo</h4><p><b>04</b>Ficha técnica en PDF</p><p><b>05</b>Vídeo montado sin cortes</p><p><b>06</b>Pedigrí completo</p><p><b>07</b>Informe veterinario</p><p><b>08</b>3 caballos similares</p><p><b>09</b>Nuevo caballo para ti</p><p><b>10</b>Caballo de la semana</p><p><b>11</b>Cambio de precio</p></div>
+    </div>
+    <div data-a="up" style="--d:650">
+      <div class="g15"><h4>Seguimiento</h4><p><b>12</b>¿Viste el vídeo entero?</p><p><b>13</b>Recordatorio 24 h</p><p><b>14</b>Recordatorio 72 h</p><p><b>15</b>Transporte, IVA y prueba</p><p><b>16</b>Testimonio de comprador</p><p><b>17</b>Cómo elegimos caballos</p></div>
+      <div class="g15"><h4>Visita y prueba</h4><p><b>18</b>Agenda tu prueba</p><p><b>19</b>Cita confirmada</p><p><b>20</b>Recordatorio de cita</p><p><b>21</b>Cómo llegar a Bunyola</p><p><b>22</b>Videollamada en directo</p></div>
+    </div>
+    <div data-a="up" style="--d:800">
+      <div class="g15"><h4>Cierre</h4><p><b>23</b>Reserva del caballo</p><p><b>24</b>Documentación</p><p><b>25</b>Transporte y entrega</p></div>
+      <div class="g15"><h4>Postventa</h4><p><b>26</b>Bienvenida a La Gubía</p><p><b>27</b>Seguimiento a 30 días</p><p><b>28</b>Reactivar lead frío</p><p><b>29</b>¿Vendes tu caballo?</p></div>
+      <div class="note"><b>Se rellenan solas</b>Nombre, caballo, idioma y ficha cambian en cada envío.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 · WHATSAPP -->
+<section class="s" id="s16" data-tone="dark" data-sec="WhatsApp" aria-label="Simulación de WhatsApp">
+  <div class="abs flw float"><div class="sim p3d" data-sim="wa"></div></div>
+  <p class="abs k" data-a="up" style="--d:150">WhatsApp · simulación en tiempo real</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">La ficha llega</i></span><span class="ln it"><em style="--d:400">antes de que se enfríe</em></span></h2>
+  <div class="abs pts" data-a="fade" style="--d:600">
+    <div class="pt16"><b>01</b><span>Plantilla aprobada por Meta, con vídeo y botones</span></div>
+    <div class="pt16"><b>02</b><span>Ficha técnica del caballo en PDF, al instante</span></div>
+    <div class="pt16"><b>03</b><span>Cuando contesta, el setter IA responde en segundos, 24/7 y en su idioma</span></div>
+    <div class="pt16"><b>04</b><span>Cualifica: para quién, nivel, presupuesto y plazo</span></div>
+    <div class="pt16"><b>05</b><span>Agenda la videollamada y pasa el lead al closer con todo el contexto</span></div>
+  </div>
+  <p class="abs live mono" data-a="fade" style="--d:900"><i></i>El móvil de la compradora, en directo</p>
+</section>
+
+<script>
+(()=>{const H=window.__hooks=window.__hooks||{};
+H.s16={enter(s){const rows=[...s.querySelectorAll('.pt16')],host=s.querySelector('[data-sim]');rows.forEach(r=>r.classList.remove('act'));host.onstep=i=>rows.forEach((r,j)=>r.classList.toggle('act',j===i))}};
+})();
+</script>
+
+<style>
+/* ===== 17 · setter ===== */
+#s17 .k{left:72px;top:118px}
+#s17 h2{left:72px;top:152px;font-size:88px}
+.c17{position:absolute;top:356px}
+.c17 h3{font:600 13px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--wine);border-bottom:2px solid var(--navy);padding-bottom:10px}
+.q17{display:grid;grid-template-columns:38px 1fr;align-items:center;height:72px;border-bottom:1px solid var(--hair-d);font-size:21px;font-weight:500}
+.q17 b{font:500 14px/1 var(--f-m);color:var(--wine)}
+.q17 em{font:600 16px/1 var(--f-m);font-style:normal;color:var(--wine);text-align:right}
+.q17.pt{grid-template-columns:1fr 60px}
+#s17 .gauge{left:1000px;top:330px;width:368px}
+#s17 .gn{font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:230px;line-height:.82;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#s17 .gt{position:absolute;left:214px;top:22px;background:var(--hot);color:#fff;font:600 14px/1 var(--f-m);letter-spacing:.1em;padding:9px 12px}
+#s17 .gs{position:absolute;left:214px;top:70px;font:500 12.5px/1.4 var(--f-m);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+#s17 .scale{position:relative;margin-top:22px;height:16px;display:flex}
+#s17 .scale i{display:block;height:100%}
+#s17 .scale .mk{position:absolute;top:-9px;left:0;width:4px;height:34px;background:var(--navy);transition:left 1.6s var(--ease) .9s}
+#s17.on .scale .mk{left:87%}
+#s17 .tiers{margin-top:26px;display:flex;flex-direction:column;gap:10px}
+#s17 .tiers p{display:grid;grid-template-columns:120px 1fr;font-size:17px;line-height:1.3;font-weight:500;border-top:1px solid var(--hair-d);padding-top:9px}
+#s17 .tiers b{font:600 13px/1.7 var(--f-m);text-transform:uppercase;letter-spacing:.04em}
+#s17 .foot{left:72px;top:852px;color:var(--ink-soft)}
+/* ===== 19 · email ===== */
+#s19 .k{left:72px;top:118px}
+#s19 h2{left:72px;top:152px;font-size:88px}
+#s19 .line{left:72px;top:478px;width:1296px;height:3px;background:var(--hair-d)}
+#s19 .line i{display:block;height:100%;background:var(--wine);transform-origin:left}
+#s19.on .line i{animation:a-growx 2.6s cubic-bezier(.4,0,.2,1) .6s both}
+.n19{position:absolute;top:372px;width:176px}
+.n19 b{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:78px;line-height:.9;color:var(--wine)}
+.n19 i{display:block;width:17px;height:17px;border-radius:50%;background:var(--cream);border:4px solid var(--wine);margin:28px 0 22px}
+.n19 strong{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:28px;line-height:.98;text-transform:uppercase}
+.n19 span{display:block;margin-top:8px;font-size:15.5px;line-height:1.35;color:var(--ink-soft)}
+#s19 .trig{left:72px;top:716px;width:1296px;background:var(--navy);color:var(--cream);display:grid;grid-template-columns:230px 1fr 1fr 1fr;gap:0}
+#s19 .trig>*{padding:24px 26px;border-left:1px solid var(--hair)}
+#s19 .trig h3{font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:40px;line-height:.9;text-transform:uppercase;color:var(--yellow);border-left:0}
+#s19 .trig p{font-size:17px;line-height:1.38}
+#s19 .trig p b{display:block;font:600 12px/1 var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);margin-bottom:9px}
+/* ===== 20 · entregables ===== */
+#s20 .bg{opacity:.34}
+#s20 .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,26,46,.75),rgba(6,26,46,.55) 40%,rgba(6,26,46,.92))}
+#s20 .k{left:72px;top:118px}
+#s20 h2{left:72px;top:152px;font-size:88px}
+#s20 .grid{left:72px;top:372px;width:1296px;display:grid;grid-template-columns:repeat(4,1fr);gap:34px 40px}
+.d20{border-top:2px solid var(--yellow);padding-top:16px}
+.d20 b{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:132px;line-height:.85;color:var(--yellow);font-variant-numeric:tabular-nums}
+.d20 span{display:block;margin-top:12px;font-size:19px;line-height:1.35;color:var(--cream);max-width:250px}
+/* ===== 21 · pasos ===== */
+#s21 .k{left:72px;top:118px}
+#s21 h2{left:72px;top:152px;font-size:88px}
+#s21 .weeks{left:72px;top:356px;width:1296px;display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.w21{padding:0 26px 0 0}
+.w21 .bar{height:10px;background:var(--hair-d);margin-bottom:18px;position:relative;overflow:hidden}
+.w21 .bar i{position:absolute;inset:0;background:var(--navy);transform-origin:left}
+#s21.on .w21 .bar i{animation:a-growx .9s var(--ease) both;animation-delay:calc(var(--d)*1ms)}
+.w21:first-child .bar i{background:var(--wine)}
+.w21 small{display:block;font:600 12.5px/1 var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--wine)}
+.w21 b{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:900;font-size:112px;line-height:.9;margin-top:10px}
+.w21 strong{display:block;font-family:var(--f-d);font-stretch:62%;font-weight:800;font-size:32px;line-height:.98;text-transform:uppercase;margin-top:6px}
+.w21 span{display:block;margin-top:10px;font-size:17px;line-height:1.38;color:var(--ink-soft)}
+#s21 .need{left:72px;top:716px;width:1296px;background:var(--navy);color:var(--cream);padding:24px 28px 26px}
+#s21 .need h3{font:600 13px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:16px}
+#s21 .need div{display:grid;grid-template-columns:repeat(4,1fr);gap:0 26px}
+#s21 .need p{font-size:18px;line-height:1.32;font-weight:500;display:grid;grid-template-columns:30px 1fr}
+#s21 .need p i{width:18px;height:18px;border:2px solid var(--yellow);margin-top:3px}
+/* ===== 22 · cierre ===== */
+#s22 .sh{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,26,46,.95) 0%,rgba(6,26,46,.78) 38%,rgba(6,26,46,.12) 78%),linear-gradient(0deg,rgba(6,26,46,.9),rgba(6,26,46,0) 46%)}
+#s22 svg{position:absolute;inset:0}
+#s22 .logo{left:72px;top:54px;height:150px;width:auto}
+#s22 h1{left:72px;top:372px;font-size:156px}
+#s22 h1 .it{font-size:.86em;padding-bottom:.14em}
+#s22 .p{left:72px;top:706px;width:620px}
+#s22 .tag{left:72px;top:836px}
+/* leyenda de anuncios */
+.adleg{left:72px;top:842px;width:1296px;display:flex;gap:34px;align-items:center;border-top:1px solid var(--hair-d);padding-top:18px;font:500 12.5px/1 var(--f-m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.adleg span{display:flex;align-items:center;gap:8px}
+.adleg i{width:10px;height:10px;border-radius:50%}
+.adleg b{margin-left:auto;font-weight:600;color:var(--navy)}
+</style>
+
+<!-- 17 · SETTER IA -->
+<section class="s" id="s17" data-tone="light" data-sec="Setter IA" aria-label="Setter con IA">
+  <p class="abs k" data-a="up" style="--d:150">Setter con IA</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Cualifica antes</i></span><span class="ln it"><em style="--d:400">de que llame un closer</em></span></h2>
+  <div class="c17" style="left:72px;width:410px;--d:500" data-a="up">
+    <h3>Qué pregunta</h3>
+    <p class="q17"><b>01</b>¿Para quién es el caballo?</p>
+    <p class="q17"><b>02</b>¿Disciplina y nivel del jinete?</p>
+    <p class="q17"><b>03</b>¿Presupuesto aproximado?</p>
+    <p class="q17"><b>04</b>¿Para cuándo lo necesitáis?</p>
+    <p class="q17"><b>05</b>¿Desde qué país compráis?</p>
+  </div>
+  <div class="c17" style="left:536px;width:410px;--d:650" data-a="up">
+    <h3>Cómo puntúa</h3>
+    <p class="q17 pt">Jinete y nivel encajan<em>+20</em></p>
+    <p class="q17 pt">Presupuesto en rango<em>+30</em></p>
+    <p class="q17 pt">Compra en menos de 3 meses<em>+20</em></p>
+    <p class="q17 pt">Ha visto más del 50 % del VSL<em>+15</em></p>
+    <p class="q17 pt">Abrió la ficha 2 veces o más<em>+15</em></p>
+  </div>
+  <div class="abs gauge" data-a="right" style="--d:800">
+    <p class="gn" data-count="87" data-delay="1000">87</p>
+    <p class="gt">CALIENTE</p>
+    <p class="gs">Puntos de<br>Laura M.</p>
+    <div class="scale"><i style="width:40%;background:var(--cool)"></i><i style="width:30%;background:var(--yellow)"></i><i style="width:30%;background:var(--hot)"></i><span class="mk"></span></div>
+    <div class="tiers">
+      <p><b>70 o más</b><span>Caliente: closer en menos de 5 minutos</span></p>
+      <p><b>40 a 69</b><span>Templado: seguimiento automático</span></p>
+      <p><b>Menos de 40</b><span>Frío: reactivación mensual</span></p>
+    </div>
+  </div>
+  <p class="abs foot mono" data-a="fade" style="--d:1300">Nunca cierra precios ni opina de temas veterinarios: ahí entra una persona del club</p>
+</section>
+
+<!-- 18 · CRM -->
+<section class="s" id="s18" data-tone="dark" data-sec="CRM closers" aria-label="Render del CRM para closers">
+  <p class="abs k rk" data-a="up" style="--d:150">CRM para closers · render con datos de ejemplo</p>
+  <h2 class="abs h rh"><span class="ln"><i style="--d:250">Cada lead, <em class="it">trazado de principio a fin</em></i></span></h2>
+  <div class="lap" style="--d:450"><div class="lap-s"><div class="rsim" data-sim="crm"></div></div><div class="lap-b"></div></div>
+</section>
+
+<!-- 19 · EMAIL -->
+<section class="s" id="s19" data-tone="light" data-sec="Email" aria-label="Email marketing automático">
+  <p class="abs k" data-a="up" style="--d:150">Email marketing automático</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Una secuencia</i></span><span class="ln it"><em style="--d:400">que trabaja sola</em></span></h2>
+  <div class="abs line"><i></i></div>
+  <div class="n19" style="left:72px;--d:650" data-a="up"><b>D0</b><i></i><strong>Bienvenida</strong><span>El VSL completo y la ficha de su caballo</span></div>
+  <div class="n19" style="left:258px;--d:900" data-a="up"><b>D1</b><i></i><strong>Su caballo, en vídeo</strong><span>Vídeos sin cortes y pedigrí</span></div>
+  <div class="n19" style="left:444px;--d:1150" data-a="up"><b>D3</b><i></i><strong>Cómo elegimos</strong><span>El método de David, caballo a caballo</span></div>
+  <div class="n19" style="left:630px;--d:1400" data-a="up"><b>D5</b><i></i><strong>Comprar sin riesgo</strong><span>Veterinario, prueba y transporte</span></div>
+  <div class="n19" style="left:816px;--d:1650" data-a="up"><b>D7</b><i></i><strong>Caballos para ti</strong><span>Nuevos que encajan con su búsqueda</span></div>
+  <div class="n19" style="left:1002px;--d:1900" data-a="up"><b>D14</b><i></i><strong>Ven a Mallorca</strong><span>Invitación a probar en Bunyola</span></div>
+  <div class="n19" style="left:1188px;--d:2150" data-a="up"><b>D30</b><i></i><strong>¿Sigues buscando?</strong><span>Reactivación con novedades</span></div>
+  <div class="abs trig" data-a="up" style="--d:2400">
+    <h3>Dispara-<br>dores</h3>
+    <p><b>Abre la ficha 3 veces</b>Aviso inmediato al closer</p>
+    <p><b>Caballo nuevo en su rango</b>Email con la ficha, solo a quien le encaja</p>
+    <p><b>Agenda una prueba</b>La secuencia se detiene sola</p>
+  </div>
+</section>
+
+<!-- PORTADILLA 04 -->
+<section class="s sec" id="sD" data-tone="dark" data-sec="El arranque" aria-label="Cuarta parte: el arranque">
+  <img class="bg kb" src="img-group.jpg" alt="Jinetes del club en la pista" style="object-position:50% 45%">
+  <div class="sh"></div>
+  <p class="num" data-a="right" style="--d:150" aria-hidden="true">04</p>
+  <p class="abs k" data-a="up" style="--d:300">Cuarta parte</p>
+  <h1 class="abs h"><span class="ln"><i style="--d:400">El arranque</i></span><span class="ln it"><em style="--d:750">entregables y calendario</em></span></h1>
+  <div class="mq" data-a="fade" style="--d:1200"><div>Rodaje lun 23 nov · Cuatro semanas · Lanzamiento en Meta · Optimización diaria · </div></div>
+</section>
+
+<!-- 20 · ENTREGABLES -->
+<section class="s" id="s20" data-tone="dark" data-sec="Entregables" aria-label="Entregables">
+  <img class="bg kb" src="img-line.jpg" alt="Jinetes del club en la pista" style="object-position:50% 40%">
+  <div class="sh"></div>
+  <p class="abs k" data-a="up" style="--d:150">Lo que se lleva La Gubía</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Un embudo completo,</i></span><span class="ln it"><em style="--d:400">listo para vender</em></span></h2>
+  <div class="abs grid">
+    <div class="d20" data-a="up" style="--d:550"><b data-count="12" data-delay="700">12</b><span>anuncios con 12 ángulos</span></div>
+    <div class="d20" data-a="up" style="--d:630"><b>1</b><span>reel de prueba, el método y un creador de contenido formado</span></div>
+    <div class="d20" data-a="up" style="--d:710"><b>2+</b><span>idiomas grabados en el VSL, más los de IA</span></div>
+    <div class="d20" data-a="up" style="--d:790"><b>1</b><span>web con catálogo y ficha por caballo</span></div>
+    <div class="d20" data-a="up" style="--d:870"><b data-count="29" data-delay="1000">29</b><span>plantillas de WhatsApp en Meta</span></div>
+    <div class="d20" data-a="up" style="--d:950"><b>24/7</b><span>setter con IA cualificando</span></div>
+    <div class="d20" data-a="up" style="--d:1030"><b>1</b><span>CRM con llamadas transcritas</span></div>
+    <div class="d20" data-a="up" style="--d:1110"><b data-count="7" data-delay="1200">7</b><span>emails automáticos y disparadores</span></div>
+  </div>
+</section>
+
+<!-- 21 · PRÓXIMOS PASOS -->
+<section class="s" id="s21" data-tone="light" data-sec="Próximos pasos" aria-label="Próximos pasos">
+  <p class="abs k" data-a="up" style="--d:150">Próximos pasos · propuesta</p>
+  <h2 class="abs h"><span class="ln"><i style="--d:250">Cuatro semanas,</i></span><span class="ln it"><em style="--d:400">del rodaje a las ventas</em></span></h2>
+  <div class="abs weeks">
+    <div class="w21" data-a="up" style="--d:600"><div class="bar"><i style="--d:900"></i></div><small>23–29 nov</small><b>01</b><strong>Rodaje y reel</strong><span>Rodaje el lunes 23, reel de prueba publicado y datos a las 72 h. El martes 24 es la Academia, proyecto aparte</span></div>
+    <div class="w21" data-a="up" style="--d:720"><div class="bar"><i style="--d:1500"></i></div><small>30 nov–6 dic</small><b>02</b><strong>Montaje</strong><span>Los 12 anuncios, el VSL en español e inglés, las fichas y la selección del creador de contenido</span></div>
+    <div class="w21" data-a="up" style="--d:840"><div class="bar"><i style="--d:2100"></i></div><small>7–13 dic</small><b>03</b><strong>Sistema</strong><span>Web y catálogo, 29 plantillas aprobadas, setter, CRM y email conectados</span></div>
+    <div class="w21" data-a="up" style="--d:960"><div class="bar"><i style="--d:2700"></i></div><small>14–20 dic</small><b>04</b><strong>Lanzamiento</strong><span>Campañas en Meta, idiomas con IA y optimización diaria</span></div>
+  </div>
+  <div class="abs need" data-a="up" style="--d:1300">
+    <h3>Qué necesitamos del club antes del lunes</h3>
+    <div><p><i></i>Lista de caballos en venta y sus papeles</p><p><i></i>Un comprador para el testimonio</p><p><i></i>Acceso a Meta Business y WhatsApp</p><p><i></i>Pista y jinetes reservados para el rodaje</p></div>
+  </div>
+</section>
+
+<!-- 22 · CIERRE -->
+<section class="s" id="s22" data-tone="dark" data-sec="Cierre" aria-label="Cierre">
+  <img class="bg kb" src="img-arena.jpg" alt="La pista del club con la Serra de Tramuntana al fondo" style="object-position:60% 50%">
+  <div class="sh"></div>
+  <svg viewBox="0 0 1440 1000" aria-hidden="true"><line class="draw" style="--len:1500;--d:400" x1="700" y1="-20" x2="1500" y2="1020" stroke="#FFC428" stroke-width="3"/><line class="draw" style="--len:1500;--d:600" x1="1500" y1="-20" x2="700" y2="1020" stroke="#F9F7F2" stroke-opacity=".5" stroke-width="1.5"/></svg>
+  <img class="abs logo" data-a="fade" src="img-logo.png" alt="Logo del Club Hípico La Gubía">
+  <h1 class="abs h"><span class="ln"><i style="--d:350">Todo, al instante,</i></span><span class="ln it"><em style="--d:560">en su idioma</em></span></h1>
+  <p class="abs p" data-a="up" style="--d:850">Cada persona que se interese por un caballo de La Gubía recibirá su ficha completa en segundos, y vuestro closer sabrá exactamente cuándo llamarla.</p>
+  <div class="abs tag" data-a="left" style="--d:1100"><b>Nos vemos</b> El lunes 23 en Bunyola</div>
+</section>
+<script>
+(()=>{const H=window.__hooks=window.__hooks||{};H.s22={enter(){window.__P.form({x:1100,y:330,size:430,delay:500,color:"255,196,40"})},leave(){window.__P.release()}};})();
+</script>
+
+  <div id="dim" aria-hidden="true"></div>
+  <canvas id="dust" aria-hidden="true"></canvas>
+  <div id="edge" aria-hidden="true"></div>
+  <div id="hud">
+    <div class="hl"><img src="img-logo.png" alt=""><span class="lm"></span><span class="hn">Club Hípico<br>La Gubía</span></div>
+    <div class="hr"><span id="hsec">Portada</span><b id="hnum">01 / 27</b></div>
+    <div id="course" role="navigation" aria-label="Ir a una diapositiva"><div class="rail"></div><div class="fill" id="cfill"></div><div id="runner" aria-hidden="true"></div></div>
+    <div id="nav"><button id="bprev" aria-label="Anterior">←</button><button id="bnext" aria-label="Siguiente">→</button><button id="bfull" aria-label="Pantalla completa">⤢</button></div>
+  </div>
+</div></div>
+<div id="rot">Gira el dispositivo para verla en grande</div>
+
+<!-- ================= SIMULACIÓN: REEL ================= -->
+<template id="t-reel"><style>
+:host{display:block;position:relative;width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;color:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+.ph{position:absolute;inset:0;border-radius:58px;background:#0a0a0b;padding:11px;box-shadow:inset 0 0 0 2px #2c2c2e,0 40px 90px rgba(0,0,0,.6)}
+.sc{position:relative;width:100%;height:100%;border-radius:48px;overflow:hidden;background:#000}
+.isl{position:absolute;top:12px;left:50%;width:108px;height:31px;margin-left:-54px;background:#000;border-radius:20px;z-index:30}
+.sb{position:absolute;top:17px;left:32px;right:28px;display:flex;justify-content:space-between;font-size:15px;font-weight:600;z-index:25}
+.s{position:absolute;inset:0;opacity:0;transition:opacity .45s;overflow:hidden}
+.s.on{opacity:1}
+.s img{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;object-fit:cover}
+.s::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5),rgba(0,0,0,0) 24%,rgba(0,0,0,0) 50%,rgba(0,0,0,.78))}
+.s1 img{object-position:74% 30%;transform-origin:72% 34%}
+.s1.on img{animation:z1 2.6s ease-out both}@keyframes z1{from{transform:scale(1.5)}to{transform:scale(2.5)}}
+.s2 img{object-position:38% 50%;transform-origin:40% 55%}
+.s2.on img{animation:z2 3s ease-out both}@keyframes z2{from{transform:scale(1.05)}to{transform:scale(1.22)}}
+.s3 img{width:210%;object-position:50% 50%}
+.s3.on img{animation:pan 3s linear both}@keyframes pan{from{transform:translateX(-4%)}to{transform:translateX(-46%)}}
+.s4 img{object-position:28% 50%;transform-origin:30% 55%}
+.s4.on img{animation:z4 3.4s linear both}@keyframes z4{from{transform:scale(1.25)}to{transform:scale(1.6)}}
+.s5 img{object-position:64% 50%;transform-origin:64% 60%}
+.s5.on img{animation:z5 2.8s ease-out both}@keyframes z5{from{transform:scale(1.6)}to{transform:scale(1.9)}}
+.s6{background:#061A2E}
+.s6::after{display:none}
+.scan{position:absolute;left:26px;right:26px;height:2px;background:#FFC428;box-shadow:0 0 18px #FFC428;top:150px;z-index:3;opacity:0}
+.s2.on .scan{animation:sc 2.6s ease-in-out both}@keyframes sc{0%{top:150px;opacity:1}90%{opacity:1}100%{top:520px;opacity:0}}
+.br{position:absolute;left:40px;top:140px;right:40px;height:390px;z-index:3}
+.br i{position:absolute;width:32px;height:32px;border-color:#FFC428;border-style:solid}
+.br i:nth-child(1){left:0;top:0;border-width:3px 0 0 3px}.br i:nth-child(2){right:0;top:0;border-width:3px 3px 0 0}.br i:nth-child(3){left:0;bottom:0;border-width:0 0 3px 3px}.br i:nth-child(4){right:0;bottom:0;border-width:0 3px 3px 0}
+.fps{position:absolute;top:104px;right:16px;font-size:12px;font-weight:700;letter-spacing:2px;background:rgba(0,0,0,.5);padding:5px 9px;border-radius:6px;z-index:3}
+.rec{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff3b30;margin-right:6px;animation:bl 1.2s steps(2) infinite}@keyframes bl{50%{opacity:.2}}
+.chk{position:absolute;left:16px;top:98px;display:flex;flex-direction:column;gap:6px;z-index:12}
+.ck{font-size:12px;font-weight:800;letter-spacing:1.5px;background:rgba(6,26,46,.88);color:#FFC428;border:1px solid rgba(255,196,40,.6);padding:6px 10px;border-radius:7px;opacity:0;transform:translateX(-20px);transition:all .4s}
+.ck.on{opacity:1;transform:none}
+.cap{position:absolute;left:22px;right:66px;top:536px;font-family:"Archivo","Arial Narrow",sans-serif;font-stretch:62%;font-size:38px;line-height:.98;font-weight:900;text-transform:uppercase;text-shadow:0 2px 14px rgba(0,0,0,.7);z-index:12;opacity:0;transform:translateY(14px);transition:all .35s}
+.cap.on{opacity:1;transform:none}
+.cap b{background:#FFC428;color:#0A2E50;padding:0 6px;text-shadow:none;font-weight:900}
+.top{position:absolute;top:56px;left:20px;right:20px;display:flex;justify-content:space-between;font-size:20px;font-weight:700;z-index:12}
+.rail{position:absolute;right:11px;bottom:146px;display:flex;flex-direction:column;align-items:center;gap:19px;z-index:12;font-size:12px;font-weight:600}
+.rail div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.rail svg{width:29px;height:29px;fill:none;stroke:#fff;stroke-width:2}
+.lk svg{fill:#ff3040;stroke:#ff3040}
+.bt{position:absolute;left:16px;right:66px;bottom:52px;z-index:12}
+.us{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.av{width:30px;height:30px;border-radius:50%;background:#0A2E50 url(img-logo.png) center/60% no-repeat;border:1px solid rgba(255,255,255,.6);flex:none}
+.fl{border:1px solid rgba(255,255,255,.7);border-radius:7px;padding:3px 8px;font-size:12px}
+.tx{font-size:13px;margin-top:7px;line-height:1.3}
+.mu{font-size:12px;margin-top:6px;opacity:.85}
+.pg{position:absolute;left:0;bottom:0;height:3px;background:#fff;z-index:14;width:0}
+.tcd{position:absolute;right:16px;top:60px;font-size:12px;font-weight:700;z-index:13;font-variant-numeric:tabular-nums;opacity:.9}
+.cta{position:absolute;left:24px;right:24px;top:118px;text-align:center}
+.cta img{position:static;width:74px;height:auto;margin:0 auto 14px;display:block}
+.cta strong{display:block;font-family:"Bodoni Moda",Georgia,serif;font-style:italic;font-weight:500;font-size:40px;line-height:1.02;color:#FFC428}
+.cta p{font-size:14px;color:#c9d3cc;margin-top:12px}
+.cm{position:absolute;left:20px;right:74px;display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.1);border-radius:16px;padding:8px 12px;font-size:14px;opacity:0;transform:translateY(16px) scale(.96);transition:all .45s}
+.cm.on{opacity:1;transform:none}
+.cm i{width:24px;height:24px;border-radius:50%;background:#5b7a9a;font-style:normal;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.heart{position:absolute;color:#ff3040;font-size:26px;right:30px;opacity:0;z-index:13}
+.s6.on .heart{animation:hf 2.4s ease-out infinite}@keyframes hf{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-220px) scale(1.2)}}
+</style><div class="ph"><div class="sc">
+<div class="isl"></div><div class="sb"><span>9:41</span><span>●●● 5G ▮</span></div>
+<div class="s s1"><img src="img-kids.jpg" alt=""></div>
+<div class="s s2"><img src="img-check.jpg" alt=""><div class="br"><i></i><i></i><i></i><i></i></div><div class="scan"></div></div>
+<div class="s s3"><img src="img-trot.jpg" alt=""></div>
+<div class="s s4"><img src="img-bay.jpg" alt=""><div class="fps"><span class="rec"></span>120 FPS</div></div>
+<div class="s s5"><img src="img-pony.jpg" alt=""></div>
+<div class="s s6"><div class="cta"><img src="img-logo.png" alt=""><strong>La ficha completa, en tu WhatsApp</strong><p>Comenta la palabra y te la enviamos</p></div>
+<div class="cm" style="top:372px"><i>ME</i><span><b>marta.eq</b> CABALLO 🙌</span></div>
+<div class="cm" style="top:424px"><i>JD</i><span><b>jumpers_de</b> CABALLO</span></div>
+<div class="cm" style="top:476px"><i>LH</i><span><b>lucia_hipica</b> ¡CABALLO! ¿Precio?</span></div>
+<span class="heart" style="bottom:240px">♥</span><span class="heart" style="bottom:200px;right:44px;animation-delay:.8s">♥</span></div>
+<div class="top"><span>Reels</span><span></span></div>
+<div class="tcd" id="tc">0:00 / 0:30</div>
+<div class="chk"><div class="ck" id="k1">✓ APLOMOS</div><div class="ck" id="k2">✓ MOVIMIENTO</div><div class="ck" id="k3">✓ TÉCNICA</div><div class="ck" id="k4">✓ CARÁCTER</div></div>
+<div class="cap" id="cap"></div>
+<div class="rail"><div class="lk"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C.8 8.5 3 4.5 6.8 4.5c2.2 0 3.6 1.3 5.2 3 1.6-1.7 3-3 5.2-3 3.8 0 6 4 4.3 7.5C19 16.5 12 21 12 21z"/></svg><span id="lk">1,2 mil</span></div><div><svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg><span id="cmn">86</span></div><div><svg viewBox="0 0 24 24"><path d="M22 3 11 13M22 3l-7 18-4-8-8-4 19-6z"/></svg><span id="sh">210</span></div><div><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg><span id="sv">340</span></div></div>
+<div class="bt"><div class="us"><span class="av"></span>clubhipicolagubia<span class="fl">Seguir</span></div><div class="tx">Lo que mira un jinete internacional antes de comprar 👀</div><div class="mu">♫ Audio original · Club Hípico La Gubía</div></div>
+<div class="pg" id="pg"></div>
+</div></div></template>
+
+<script>
+(window.__boot=window.__boot||[]).push(()=>{
+/* ---------- REEL ---------- */
+__sim('reel',async(sr,{every,host})=>{
+  const g=id=>sr.getElementById(id),S=[...sr.querySelectorAll('.s')],cap=g('cap');
+  const D=[2400,2800,2900,3200,2600,3700],R=[0,2,6,12,18,24,30],T=D.reduce((a,b)=>a+b,0);
+  const C=['¿Qué miras antes de <b>comprar</b> un caballo?','Lo primero: los <b>aplomos</b>','Después: cómo <b>se mueve</b>','Y cómo <b>salta</b> a 120 fps','Lo que decide: su <b>carácter</b>','Comenta <b>CABALLO</b> 👇'];
+  const fmt=n=>n>=1000?(n/1000).toFixed(1).replace('.',',')+' mil':String(n);
+  const t0=performance.now();let cur=-1;
+  function show(i){S.forEach((s,j)=>s.classList.toggle('on',j===i));cap.classList.remove('on');setTimeout(()=>{cap.innerHTML=C[i];cap.classList.add('on')},180);
+    for(let k=1;k<=4;k++)g('k'+k).classList.toggle('on',i>=k&&i<5);
+    sr.querySelectorAll('.cm').forEach((c,j)=>{c.classList.remove('on');if(i===5)setTimeout(()=>c.classList.add('on'),500+j*650)});
+    host.onframe&&host.onframe(i)}
+  every(()=>{let e=(performance.now()-t0)%T,i=0,a=0;while(e>=a+D[i]){a+=D[i];i++}
+    if(i!==cur){cur=i;show(i)}
+    const rt=R[i]+(e-a)/D[i]*(R[i+1]-R[i]),p=e/T;g('pg').style.width=(p*100)+'%';g('tc').textContent='0:'+String(Math.floor(rt)).padStart(2,'0')+' / 0:30';
+    g('lk').textContent=fmt(Math.round(1200+p*p*47100));g('cmn').textContent=fmt(Math.round(86+p*p*3900));g('sh').textContent=fmt(Math.round(210+p*p*8800));g('sv').textContent=fmt(Math.round(340+p*p*12400))},50);
+});
+});
+</script>
+
+<!-- ================= SIMULACIÓN: WEB ================= -->
+<template id="t-web"><style>
+:host{display:block;position:relative;width:100%;height:100%;font-family:"Archivo","Helvetica Neue",Arial,sans-serif;color:#0A2E50}
+*{box-sizing:border-box;margin:0;padding:0}
+img{max-width:none}
+.w{position:absolute;inset:0;border-radius:14px;overflow:hidden;background:#F9F7F2;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.14)}
+.bar{height:44px;background:#E9E6DE;display:flex;align-items:center;padding:0 16px;gap:8px;border-bottom:1px solid #d6d1c5}
+.d{width:12px;height:12px;border-radius:50%}
+.url{flex:1;max-width:560px;margin:0 auto;height:28px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font:500 13px/1 "IBM Plex Mono",monospace;color:#333}
+.vp{position:absolute;top:44px;left:0;right:0;bottom:0;overflow:hidden}
+.pg{position:absolute;left:0;right:0;top:0;transition:transform 1.5s cubic-bezier(.65,0,.35,1)}
+.nav{height:62px;display:flex;align-items:center;padding:0 40px;gap:28px;background:#061A2E;color:#F9F7F2;font-size:14px;font-weight:500}
+.nav img{height:38px}
+.nm{font:500 11px/1.3 "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;margin-right:auto}
+.lng{display:flex;gap:3px}.lng span{padding:5px 8px;font:600 11px/1 "IBM Plex Mono",monospace;transition:all .3s}.lng .on{background:#FFC428;color:#0A2E50}
+.nb{background:#FFC428;color:#0A2E50;padding:11px 16px;font-weight:700;font-size:13px}
+.hero{height:534px;position:relative;color:#F9F7F2;display:flex;padding:50px 40px;gap:40px;overflow:hidden;background:#061A2E}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;opacity:.5;animation:hz 18s ease-in-out infinite alternate}
+@keyframes hz{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,26,46,.96) 0%,rgba(6,26,46,.62) 55%,rgba(6,26,46,.3))}
+.hl{flex:1;display:flex;flex-direction:column;gap:16px;padding-top:30px;z-index:2}
+.ey{font:500 12px/1 "IBM Plex Mono",monospace;letter-spacing:.16em;color:#FFC428;text-transform:uppercase}
+.h1{font-stretch:62%;font-weight:900;font-size:64px;line-height:.9;text-transform:uppercase;white-space:nowrap}
+.h1 em{display:block;font-family:"Bodoni Moda",Georgia,serif;font-stretch:100%;font-style:italic;font-weight:500;text-transform:none;font-size:.96em;color:#FFC428;letter-spacing:-.02em;margin-top:8px}
+.sub{font-size:17px;color:rgba(249,247,242,.76);line-height:1.45;max-width:470px}
+.btns{display:flex;gap:10px;margin-top:8px}
+.b1{background:#FFC428;color:#0A2E50;padding:15px 22px;font-weight:700;font-size:14px}
+.b2{border:1px solid rgba(249,247,242,.5);padding:15px 22px;font-weight:600;font-size:14px}
+.vid{width:548px;height:308px;margin-top:38px;position:relative;overflow:hidden;background:#000;box-shadow:0 24px 60px rgba(0,0,0,.5);z-index:2;flex:none}
+.vid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.vid::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,14,26,.3),rgba(3,14,26,0) 35%,rgba(3,14,26,.88))}
+.chp{position:absolute;top:12px;left:12px;z-index:2;background:#FFC428;color:#0A2E50;font:600 11px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;padding:7px 9px;text-transform:uppercase}
+.play{position:absolute;left:50%;top:50%;width:72px;height:72px;margin:-36px;border-radius:50%;background:rgba(249,247,242,.94);z-index:2;display:flex;align-items:center;justify-content:center;transition:opacity .5s,transform .5s}
+.play::after{content:"";border-left:23px solid #0A2E50;border-top:14px solid transparent;border-bottom:14px solid transparent;margin-left:6px}
+.play.off{opacity:0;transform:scale(1.5)}
+.sbt{position:absolute;left:20px;right:20px;bottom:46px;z-index:2;text-align:center;font-size:17px;font-weight:600;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.9);transition:opacity .3s}
+.ctl{position:absolute;left:14px;right:14px;bottom:14px;z-index:2;display:flex;align-items:center;gap:10px;font:500 11.5px/1 "IBM Plex Mono",monospace;color:#fff}
+.trk{flex:1;height:4px;background:rgba(255,255,255,.3);position:relative}.trk b{position:absolute;left:0;top:0;bottom:0;background:#FFC428;width:0}
+.tr{display:flex;justify-content:space-around;background:#FFC428;color:#0A2E50;padding:19px 40px;font:600 13px/1 "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase}
+.cat{padding:36px 40px 40px}
+.ch{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.ch h2{font-stretch:62%;font-weight:900;font-size:50px;line-height:.9;text-transform:uppercase}
+.flt{display:flex;gap:6px}.flt span{border:1px solid rgba(10,46,80,.3);padding:8px 12px;font:500 11.5px/1 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+.gr{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cd{background:#fff;overflow:hidden;box-shadow:0 6px 22px rgba(10,46,80,.08);transition:transform .4s,box-shadow .4s}
+.cd.hv{transform:translateY(-6px);box-shadow:0 20px 44px rgba(10,46,80,.24)}
+.im{height:180px;position:relative;overflow:hidden}
+.im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.cd.hv .im img{transform:scale(1.07)}
+.bd{position:absolute;left:0;top:12px;font:600 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;padding:6px 10px;background:#FFC428;color:#0A2E50}
+.bd.r{background:#630D16;color:#fff}
+.ci{padding:14px 16px 16px;display:flex;flex-direction:column;gap:3px}
+.cn{font-family:"Bodoni Moda",Georgia,serif;font-style:italic;font-weight:500;font-size:26px;line-height:1.1}
+.cm{font-size:13px;color:rgba(10,46,80,.68)}
+.cp{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font:600 14px/1 "IBM Plex Mono",monospace}
+.cp span{font:700 12.5px/1 "Archivo",sans-serif;color:#630D16}
+.fm{margin:0 40px 40px;background:#061A2E;color:#F9F7F2;display:flex;gap:40px;padding:36px 40px;position:relative;align-items:center}
+.fl{flex:1;display:flex;flex-direction:column;gap:12px}
+.fl h3{font-stretch:62%;font-weight:900;font-size:50px;line-height:.9;text-transform:uppercase}
+.fl h3 em{font-family:"Bodoni Moda",Georgia,serif;font-stretch:100%;font-style:italic;font-weight:500;text-transform:none;color:#FFC428;font-size:.82em}
+.fl p{font-size:15px;color:rgba(249,247,242,.72);line-height:1.5;max-width:460px}
+.fr{width:440px;display:flex;flex-direction:column;gap:9px}
+.in{height:48px;background:#0B2742;border:1px solid rgba(249,247,242,.2);display:flex;align-items:center;padding:0 14px;font-size:15px;transition:all .25s}
+.in.f{border-color:#FFC428;box-shadow:0 0 0 3px rgba(255,196,40,.22)}
+.in i{font:500 10.5px/1 "IBM Plex Mono",monospace;font-style:normal;letter-spacing:.1em;text-transform:uppercase;color:rgba(249,247,242,.5);width:96px}
+.cur{display:inline-block;width:2px;height:18px;background:#FFC428;margin-left:1px;vertical-align:-3px;animation:bk 1s steps(2) infinite}@keyframes bk{50%{opacity:0}}
+.sb{height:52px;background:#25D366;color:#06301a;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s}
+.sb.p{transform:scale(.96)}
+.toast{position:absolute;right:22px;top:22px;background:#F9F7F2;color:#0A2E50;padding:14px 18px;display:flex;gap:12px;align-items:center;box-shadow:0 18px 50px rgba(0,0,0,.5);font-size:13.5px;opacity:0;transform:translateY(-16px);transition:all .45s;z-index:9;border-left:5px solid #25D366}
+.toast.on{opacity:1;transform:none}
+.toast b{display:block;font-size:15px}
+.ok{width:32px;height:32px;border-radius:50%;background:#25D366;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}
+.ptr{position:absolute;width:26px;height:26px;z-index:20;transition:left 1s cubic-bezier(.65,0,.35,1),top 1s cubic-bezier(.65,0,.35,1);left:900px;top:420px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.45))}
+</style><div class="w">
+<div class="bar"><span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span><div class="url">clubhipicolagubia.com/caballos</div></div>
+<div class="vp"><div class="pg" id="pg">
+<div class="nav"><img src="img-logo.png" alt=""><span class="nm">Club Hípico<br>La Gubía</span><span>Caballos</span><span>Cómo compramos</span><span>Historia</span><span>Contacto</span><span class="lng" id="lng"><span class="on">ES</span><span>EN</span><span>DE</span><span>FR</span></span><span class="nb">Agendar visita</span></div>
+<div class="hero"><img src="img-arena.jpg" alt="">
+<div class="hl"><span class="ey">Compra-venta de caballos · Mallorca</span><div class="h1">Caballos elegidos por<em>jinetes internacionales</em></div><div class="sub">Desde 2005 seleccionamos caballos en seis países. Mira el vídeo y descubre cómo encontramos el tuyo.</div><div class="btns"><span class="b1">Ver caballos disponibles</span><span class="b2">▶ Ver el vídeo</span></div></div>
+<div class="vid"><img src="img-team.jpg" alt=""><span class="chp" id="chp">Cap. 1 · El gancho</span><div class="play" id="play"></div><div class="sbt" id="sbt">Lo que nadie te cuenta antes de comprar un caballo</div><div class="ctl"><span>▶</span><div class="trk"><b id="trk"></b></div><span id="tm">0:00 / 6:40</span><span>CC</span></div></div></div>
+<div class="tr"><span>Desde 2005</span><span>+100 caballos seleccionados</span><span>6 países</span><span>Pre-compra veterinaria</span></div>
+<div class="cat"><div class="ch"><h2>Caballos disponibles</h2><div class="flt"><span>Salto ▾</span><span>Nivel ▾</span><span>Edad ▾</span><span>Precio ▾</span><span>Con vídeo ✓</span></div></div>
+<div class="gr" id="gr"></div></div>
+<div class="fm"><div class="fl"><span class="ey">Ficha técnica completa</span><h3>La ficha de Quórum LG, <em>al instante</em></h3><p>Pedigrí, informe veterinario, radiografías y vídeos sin cortes. Al instante y en tu idioma.</p></div>
+<div class="fr"><div class="in" id="f1"><i>Nombre</i><span id="v1"></span></div><div class="in" id="f2"><i>WhatsApp</i><span id="v2"></span></div><div class="in" id="f3"><i>Busco</i><span id="v3"></span></div><div class="sb" id="sb">Enviar ficha a mi WhatsApp</div></div></div>
+</div>
+<div class="toast" id="toast"><span class="ok">✓</span><div><b>Ficha enviada a tu WhatsApp</b>Lead registrado en el CRM · 0,8 s</div></div>
+<svg class="ptr" id="ptr" viewBox="0 0 24 24"><path d="M3 2 L3 20 L8 15 L11 22 L14 21 L11 14 L18 14 Z" fill="#fff" stroke="#111" stroke-width="1.4"/></svg>
+</div></div></template>
+
+<!-- ================= SIMULACIÓN: FICHA ================= -->
+<template id="t-ficha"><style>
+:host{display:block;position:relative;width:100%;height:100%;font-family:"Archivo","Helvetica Neue",Arial,sans-serif;color:#0A2E50}
+*{box-sizing:border-box;margin:0;padding:0}
+img{max-width:none}
+.w{position:absolute;inset:0;border-radius:14px;overflow:hidden;background:#F9F7F2;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.14)}
+.bar{height:44px;background:#E9E6DE;display:flex;align-items:center;padding:0 16px;gap:8px;border-bottom:1px solid #d6d1c5}
+.d{width:12px;height:12px;border-radius:50%}
+.url{flex:1;max-width:560px;margin:0 auto;height:28px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font:500 13px/1 "IBM Plex Mono",monospace;color:#333}
+.nav{height:54px;display:flex;align-items:center;padding:0 34px;gap:26px;background:#061A2E;color:#F9F7F2;font-size:13px;font-weight:500}
+.nav img{height:34px}
+.nm{font:500 10.5px/1.3 "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;margin-right:auto}
+.bc{font:500 11.5px/1 "IBM Plex Mono",monospace;letter-spacing:.04em;color:rgba(10,46,80,.6);padding:16px 34px 0;text-transform:uppercase}
+.m{display:flex;gap:30px;padding:14px 34px 0}
+.L{width:610px;display:flex;flex-direction:column;gap:10px;flex:none}
+.v{height:344px;position:relative;overflow:hidden;background:#000}
+.v img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .7s,transform 5s linear;transform:scale(1.02)}
+.v img.on{opacity:1;transform:scale(1.1)}
+.v::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,14,26,.35),rgba(3,14,26,0) 30%,rgba(3,14,26,.75))}
+.rx{position:absolute;inset:0;background:#07111c;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:46px 14px 40px;opacity:0;transition:opacity .6s;z-index:1}
+.rx.on{opacity:1}
+.rx i{background:radial-gradient(ellipse at 50% 40%,rgba(210,225,240,.42),rgba(120,140,160,.12) 55%,rgba(20,30,40,.6));border:1px solid rgba(180,200,220,.22)}
+.vl{position:absolute;left:0;top:14px;background:#FFC428;color:#0A2E50;font:600 11.5px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;padding:8px 12px;z-index:3;text-transform:uppercase}
+.nc{position:absolute;right:14px;top:14px;border:1px solid rgba(255,255,255,.7);color:#fff;font:600 11px/1 "IBM Plex Mono",monospace;padding:6px 8px;z-index:3}
+.ct{position:absolute;left:14px;right:14px;bottom:12px;display:flex;align-items:center;gap:10px;color:#fff;font:500 11.5px/1 "IBM Plex Mono",monospace;z-index:3}
+.tk{flex:1;height:4px;background:rgba(255,255,255,.3);overflow:hidden}.tk b{display:block;height:100%;width:0;background:#FFC428}
+.vt{display:flex;gap:6px}
+.vt span{flex:1;text-align:center;font:600 11.5px/1 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;padding:11px 0;border:1px solid rgba(10,46,80,.25);transition:all .3s}
+.vt span.on{background:#0A2E50;color:#FFC428;border-color:#0A2E50}
+.cnt{font:500 11.5px/1 "IBM Plex Mono",monospace;color:rgba(10,46,80,.6);text-transform:uppercase;letter-spacing:.06em}
+.R{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
+.bdg{display:flex;gap:6px;flex-wrap:wrap}.bdg span{font:600 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;padding:6px 9px;background:#DDF3E4;color:#17603a}
+.bdg span.g{background:#F3E6BF;color:#5c4407}
+.nmh{font-stretch:62%;font-weight:900;font-size:74px;line-height:.86;text-transform:uppercase}
+.sbx{font-size:14.5px;color:rgba(10,46,80,.74);font-weight:500}
+.pr{display:flex;align-items:baseline;gap:12px}.pr b{font-family:"Bodoni Moda",Georgia,serif;font-style:italic;font-weight:500;font-size:34px;color:#630D16;letter-spacing:-.02em;white-space:nowrap;flex:none}.pr span{font-size:12.5px;color:rgba(10,46,80,.6)}
+.tabs{display:flex;gap:20px;border-bottom:1px solid rgba(10,46,80,.2);font:600 11.5px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(10,46,80,.5)}
+.tabs span{padding:9px 0;border-bottom:3px solid transparent;transition:all .3s}.tabs span.on{color:#0A2E50;border-color:#FFC428}
+.pn{position:relative;height:178px}
+.p{position:absolute;inset:0;opacity:0;transform:translateY(8px);transition:all .45s}.p.on{opacity:1;transform:none}
+.gr{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}
+.gr div{border-bottom:1px solid rgba(10,46,80,.14);padding:7px 0;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.gr i{font:500 10.5px/1 "IBM Plex Mono",monospace;font-style:normal;letter-spacing:.08em;text-transform:uppercase;color:rgba(10,46,80,.55)}
+.gr b{font-size:14px;font-weight:700;text-align:right}
+.tree{display:flex;gap:10px;height:100%;align-items:center}
+.tc{display:flex;flex-direction:column;gap:7px;justify-content:center}
+.tc div{background:#fff;border-left:4px solid #FFC428;padding:6px 10px;font-size:13px;font-weight:700;min-width:158px}
+.tc div i{display:block;font:500 9.5px/1.4 "IBM Plex Mono",monospace;font-style:normal;color:rgba(10,46,80,.55);letter-spacing:.1em}
+.tc.c1 div{background:#0A2E50;color:#F9F7F2}.tc.c1 div i{color:#FFC428}
+.ck{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.ck div{display:flex;gap:10px;align-items:center;font-size:14.5px;font-weight:500}
+.ck b{width:20px;height:20px;background:#25D366;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none}
+table{width:100%;border-collapse:collapse;font-size:13.5px}td,th{padding:8px 8px 8px 0;border-bottom:1px solid rgba(10,46,80,.14);text-align:left}th{font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;color:rgba(10,46,80,.55)}td:last-child{font-weight:700}
+.chs{display:flex;gap:6px;flex-wrap:wrap;padding-top:8px}.chs span{font-size:13px;font-weight:600;padding:8px 11px;border:1px solid rgba(10,46,80,.28)}
+.cta{display:flex;gap:8px}
+.b{flex:1;height:48px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.wa{background:#25D366;color:#06301a;animation:pu 2.2s infinite}@keyframes pu{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}60%{box-shadow:0 0 0 12px rgba(37,211,102,0)}}
+.go{background:#FFC428;color:#0A2E50}.ol{border:1.5px solid #0A2E50}
+</style><div class="w">
+<div class="bar"><span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span><div class="url">clubhipicolagubia.com/caballos/quorum-lg</div></div>
+<div class="nav"><img src="img-logo.png" alt=""><span class="nm">Club Hípico<br>La Gubía</span><span>Caballos</span><span>Cómo compramos</span><span>Historia</span><span>ES · EN · DE</span></div>
+<div class="bc">Caballos › Salto › Quórum LG · Ref. LG-0412 · 1.284 visitas · ♡ 37 favoritos</div>
+<div class="m">
+<div class="L">
+<div class="v" id="vv"><img class="on" src="img-bay.jpg" alt="" style="object-position:30% 45%"><img src="img-check.jpg" alt="" style="object-position:45% 40%"><img src="img-david.jpg" alt="" style="object-position:50% 35%"><div class="rx" id="rx"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="vl" id="vl">Salto · 120 fps</span><span class="nc">4K</span><div class="ct"><span>▶</span><div class="tk"><b id="tk"></b></div><span id="tm">0:00</span></div></div>
+<div class="vt" id="vt"><span class="on">Salto</span><span>Montado</span><span>En concurso</span><span>Radiografías</span></div>
+<span class="cnt">12 fotos · 5 vídeos sin cortes · grabados en Bunyola</span>
+</div>
+<div class="R">
+<div class="bdg"><span>✓ Verificado por La Gubía</span><span>✓ Pre-compra disponible</span><span class="g">IVA deducible</span></div>
+<div class="nmh">Quórum LG</div>
+<div class="sbx">KWPN · Castrado · 8 años · 1,68 m · Castaño · Salto 1,30 m</div>
+<div class="pr"><b>35.000 – 45.000 €</b><span>Negociable · prueba en Mallorca · transporte a toda Europa</span></div>
+<div class="tabs" id="tabs"><span class="on">Resumen</span><span>Pedigrí</span><span>Veterinario</span><span>Resultados</span><span>Carácter</span></div>
+<div class="pn">
+<div class="p on"><div class="gr"><div><i>Raza / libro</i><b>KWPN</b></div><div><i>Nacimiento</i><b>2018 · 8 años</b></div><div><i>Alzada</i><b>1,68 m</b></div><div><i>Capa</i><b>Castaño</b></div><div><i>Nivel</i><b>1,30 m · potencial 1,40</b></div><div><i>Apto para</i><b>Amateur y junior</b></div><div><i>UELN / chip</i><b>528003 2018 0•••••</b></div><div><i>Ubicación</i><b>Bunyola, Mallorca</b></div><div><i>Sexo</i><b>Castrado</b></div><div><i>Prueba</i><b>Disponible</b></div></div></div>
+<div class="p"><div class="tree"><div class="tc c1"><div><i>CABALLO</i>Quórum LG</div></div><div class="tc"><div><i>PADRE</i>Diamant de Semilly</div><div><i>MADRE</i>Quintana</div></div><div class="tc"><div><i>ABUELO PATERNO</i>Le Tot de Semilly</div><div><i>ABUELA PATERNA</i>Venise des Cresles</div><div><i>ABUELO MATERNO</i>Chacco-Blue</div><div><i>ABUELA MATERNA</i>Ulina</div></div></div></div>
+<div class="p"><div class="ck"><div><b>✓</b>Revisión pre-compra completa · octubre 2026</div><div><b>✓</b>18 radiografías · descargables tras registrarse</div><div><b>✓</b>Piroplasmosis: negativo</div><div><b>✓</b>Vacunas y desparasitación al día</div><div><b>✓</b>Sin cirugías ni tratamientos en curso</div></div></div>
+<div class="p"><table><tr><th>CONCURSO</th><th>ALTURA</th><th>RESULTADO</th></tr><tr><td>Nacional · Baleares</td><td>1,30 m</td><td>1.º · 0 faltas</td></tr><tr><td>Nacional · Valencia</td><td>1,30 m</td><td>3.º · 0 faltas</td></tr><tr><td>Autonómico · Mallorca</td><td>1,25 m</td><td>2.º · 0 faltas</td></tr><tr><td>Autonómico · Mallorca</td><td>1,20 m</td><td>1.º · 0 faltas</td></tr></table></div>
+<div class="p"><div class="chs"><span>Noble</span><span>Muy respetuoso</span><span>Carga fácil</span><span>Se herra sin problema</span><span>Tranquilo en tráfico</span><span>Sale solo y en grupo</span><span>Sin vicios</span><span>Ideal para junior</span></div></div>
+</div>
+<div class="cta"><span class="b wa">Recibir ficha por WhatsApp</span><span class="b go">Agendar prueba</span><span class="b ol">Videollamada en directo</span></div>
+</div></div></div></template>
+
+<script>
+(window.__boot=window.__boot||[]).push(()=>{
+/* ---------- WEB ---------- */
+__sim('web',async(sr,{w,every})=>{
+  const $=id=>sr.getElementById(id),pg=$('pg'),ptr=$('ptr'),box=sr.querySelector('.w'),vp=sr.querySelector('.vp');
+  const H=[['Quórum LG','8 años · 1,68 m · KWPN','Salto 1,30 m','35–45 k€','NUEVO','bay.jpg','30% 45%'],['Dakota','6 años · 1,64 m · BWP','Salto 1,20 m','25–35 k€','','white.jpg','48% 40%'],['Pepita','11 años · 1,46 m · Pony','Pony Club · 1,00 m','8–15 k€','','pony.jpg','62% 50%'],['Lord Tramuntana','9 años · 1,70 m · SF','Salto 1,40 m','60–90 k€','VÍDEO NUEVO','david.jpg','52% 35%'],['Bella','7 años · 1,68 m · KWPN','Doma · San Jorge','40–55 k€','RESERVADO','doma.jpg','50% 45%'],['Nómada','5 años · 1,65 m · Hann.','Caballos jóvenes','18–25 k€','','trot.jpg','40% 50%']];
+  $('gr').innerHTML=H.map((h,i)=>`<div class="cd" id="c${i}"><div class="im"><img src="img-${h[5]}" alt="" style="object-position:${h[6]}">${h[4]?`<span class="bd${h[4]=='RESERVADO'?' r':''}">${h[4]}</span>`:''}</div><div class="ci"><span class="cn">${h[0]}</span><span class="cm">${h[1]}</span><span class="cm">${h[2]}</span><div class="cp">${h[3]}<span>Ver ficha →</span></div></div></div>`).join('');
+  const SUB=[['ES','Lo que nadie te cuenta antes de comprar un caballo'],['EN','What nobody tells you before buying a horse'],['DE','Was dir vor dem Pferdekauf niemand erzählt'],['FR','Ce que personne ne vous dit avant d’acheter un cheval']];
+  let li=0,vt=0;
+  every(()=>{li=(li+1)%4;[...$('lng').children].forEach((s,j)=>s.classList.toggle('on',j===li));$('sbt').style.opacity=0;setTimeout(()=>{$('sbt').textContent=SUB[li][1];$('sbt').style.opacity=1},300)},2300);
+  every(()=>{vt=(vt+1)%400;$('trk').style.width=(vt/4)+'%';$('tm').textContent=Math.floor(vt/60)+':'+String(vt%60).padStart(2,'0')+' / 6:40';$('chp').textContent=vt<40?'Cap. 1 · El gancho':vt<120?'Cap. 2 · Nuestra historia':vt<210?'Cap. 3 · Cómo elegimos':'Cap. 4 · Cómo compras';$('play').classList.toggle('off',vt>8)},90);
+  const k=()=>box.getBoundingClientRect().width/box.offsetWidth||1;
+  const mv=(x,y)=>{ptr.style.left=x+'px';ptr.style.top=y+'px'};
+  const at=(el,dx,dy)=>{const s=k(),b=box.getBoundingClientRect(),r=el.getBoundingClientRect();mv((r.left-b.left)/s+dx,(r.top-b.top)/s+dy)};
+  const type=async(el,t)=>{for(const ch of t){el.textContent+=ch;await w(52)}};
+  const cards=()=>[...sr.querySelectorAll('.cd')];
+  while(true){
+    pg.style.transform='translateY(0)';mv(820,430);['v1','v2','v3'].forEach(i=>$(i).textContent='');$('toast').classList.remove('on');cards().forEach(c=>c.classList.remove('hv'));
+    await w(4600);pg.style.transform='translateY(-596px)';mv(600,380);await w(1700);
+    for(let i=0;i<3;i++){cards().forEach(c=>c.classList.remove('hv'));$('c'+i).classList.add('hv');at($('c'+i),190,150);await w(850)}
+    cards().forEach(c=>c.classList.remove('hv'));$('c0').classList.add('hv');at($('c0'),330,300);await w(1100);
+    pg.style.transform='translateY(-'+(pg.offsetHeight-vp.clientHeight)+'px)';mv(900,300);await w(1800);
+    for(const [f,v,t] of [['f1','v1','Laura Martín'],['f2','v2','+34 6•• ••• 482'],['f3','v3','Quórum LG · para mi hija (junior)']]){$(f).classList.add('f');at($(f),300,16);await type($(v),t);$(f).classList.remove('f');await w(220)}
+    at($('sb'),220,18);await w(800);$('sb').classList.add('p');await w(170);$('sb').classList.remove('p');$('toast').classList.add('on');await w(3800);
+  }
+});
+/* ---------- FICHA ---------- */
+__sim('ficha',async(sr,{every})=>{
+  const $=id=>sr.getElementById(id),T=[...$('tabs').children],P=[...sr.querySelectorAll('.p')],V=[...$('vt').children],I=[...$('vv').querySelectorAll('img')];
+  const VL=['Salto · 120 fps','Montado · sin cortes','En concurso','Radiografías · 18 placas'];
+  let t=0,v=0,p=0;
+  every(()=>{t=(t+1)%T.length;T.forEach((e,j)=>e.classList.toggle('on',j===t));P.forEach((e,j)=>e.classList.toggle('on',j===t))},2700);
+  every(()=>{v=(v+1)%V.length;V.forEach((e,j)=>e.classList.toggle('on',j===v));$('vl').textContent=VL[v];I.forEach((e,j)=>e.classList.toggle('on',j===v));$('rx').classList.toggle('on',v===3);p=0},3400);
+  every(()=>{p=Math.min(p+1,100);$('tk').style.width=p+'%';const s=Math.round(p*1.3);$('tm').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},34);
+});
+});
+</script>
+
+<!-- ================= SIMULACIÓN: WHATSAPP ================= -->
+<template id="t-wa"><style>
+:host{display:block;position:relative;width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;color:#111b21}
+*{box-sizing:border-box;margin:0;padding:0}
+img{max-width:none}
+.ph{position:absolute;inset:0;border-radius:60px;background:#0a0a0b;padding:11px;box-shadow:inset 0 0 0 2px #2c2c2e,0 40px 90px rgba(0,0,0,.6)}
+.sc{position:relative;width:100%;height:100%;border-radius:50px;overflow:hidden;background:#EFEAE2;display:flex;flex-direction:column}
+.isl{position:absolute;top:11px;left:50%;width:112px;height:32px;margin-left:-56px;background:#000;border-radius:20px;z-index:30}
+.sb{height:50px;flex:none;display:flex;justify-content:space-between;align-items:flex-end;padding:0 30px 7px 36px;font-size:15px;font-weight:600;background:#F6F6F6}
+.hd{flex:none;height:58px;background:#F6F6F6;display:flex;align-items:center;gap:9px;padding:0 12px;border-bottom:1px solid #ddd}
+.bk{color:#007AFF;font-size:30px;line-height:1;margin-top:-4px}
+.bn{color:#007AFF;font-size:15px;margin-left:-6px}
+.av{width:36px;height:36px;border-radius:50%;background:#0A2E50 url(img-logo.png) center/58% no-repeat;flex:none}
+.nm{flex:1;min-width:0}.nm b{font-size:15px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.vf{width:14px;height:14px;border-radius:50%;background:#25D366;color:#fff;font-size:9px;display:inline-flex;align-items:center;justify-content:center}
+.st{font-size:12px;color:#8a8a8e}.st.ty{color:#25A35A}
+.ic{display:flex;gap:16px}.ic svg{width:22px;height:22px;fill:none;stroke:#007AFF;stroke-width:1.8}
+.ch{flex:1;position:relative;overflow:hidden;background-color:#EFEAE2;background-image:radial-gradient(rgba(120,100,70,.09) 1.2px,transparent 1.3px);background-size:18px 18px}
+.ls{position:absolute;left:0;right:0;bottom:8px;display:flex;flex-direction:column;gap:5px;padding:0 9px}
+.dt{align-self:center;background:#fff;color:#54656f;font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:8px;box-shadow:0 1px .5px rgba(0,0,0,.13);margin:4px 0}
+.m{max-width:80%;padding:6px 8px 7px 9px;border-radius:12px;font-size:15px;line-height:1.3;box-shadow:0 1px .5px rgba(0,0,0,.13);position:relative;animation:pop .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.in{align-self:flex-start;background:#fff;border-top-left-radius:4px}
+.out{align-self:flex-end;background:#D9FDD3;border-top-right-radius:4px}
+.tm{float:right;font-size:10.5px;color:#667781;margin:8px 0 -4px 10px;display:flex;gap:3px;align-items:center}
+.tk{color:#8696a0;font-size:12px;letter-spacing:-4px;margin-right:3px;transition:color .3s}.tk.r{color:#53BDEB}
+.md{margin:-2px -4px 6px -5px;height:168px;border-radius:9px;position:relative;overflow:hidden;background:#000}
+.md img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:30% 45%}
+.md::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.55))}
+.pl{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:2}
+.pl::after{content:"";border-left:17px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:5px}
+.du{position:absolute;left:8px;bottom:7px;color:#fff;font-size:11.5px;font-weight:600;z-index:2}
+.ft{font-size:12px;color:#8696a0;margin-top:4px}
+.bt{align-self:flex-start;width:80%;display:flex;flex-direction:column;gap:2px;margin-top:-3px;animation:pop .32s cubic-bezier(.2,.8,.2,1)}
+.bt div{background:#fff;border-radius:10px;text-align:center;padding:8px;color:#027EB5;font-size:14px;font-weight:500;box-shadow:0 1px .5px rgba(0,0,0,.13)}
+.dc{display:flex;gap:10px;align-items:center;background:#F5F6F6;border-radius:8px;padding:9px;margin:-1px -3px 4px -4px}
+.pdf{width:34px;height:42px;border-radius:5px;background:#E5413B;color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;flex:none}
+.dn{font-size:13.5px;font-weight:600;line-height:1.25}.ds{font-size:11.5px;color:#667781;margin-top:2px}
+.tp{align-self:flex-start;background:#fff;border-radius:12px;border-top-left-radius:4px;padding:12px 14px;display:flex;gap:4px;box-shadow:0 1px .5px rgba(0,0,0,.13);animation:pop .25s ease}
+.tp i{width:8px;height:8px;border-radius:50%;background:#9aa5ab;animation:bo 1.2s infinite}
+.tp i:nth-child(2){animation-delay:.2s}.tp i:nth-child(3){animation-delay:.4s}
+@keyframes bo{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+.ib{flex:none;height:86px;background:#F6F6F6;display:flex;align-items:flex-start;gap:9px;padding:9px 11px 0;border-top:1px solid #ddd}
+.pls{color:#007AFF;font-size:30px;line-height:30px;font-weight:300}
+.inp{flex:1;min-height:34px;border-radius:17px;background:#fff;border:1px solid #ddd;padding:6px 12px;font-size:15px;line-height:1.3}
+.inp.ph0{color:#a0a0a5}
+.cur{display:inline-block;width:2px;height:17px;background:#25A35A;vertical-align:-3px;animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:0}}
+.sd{width:34px;height:34px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;transform:scale(0);transition:transform .2s;flex:none}
+.sd.on{transform:scale(1)}.sd svg{width:17px;height:17px;fill:#fff}
+.mi{width:34px;display:flex;align-items:center;justify-content:center;color:#007AFF;font-size:19px}
+.hi{position:absolute;bottom:7px;left:50%;width:130px;height:5px;margin-left:-65px;border-radius:3px;background:#111;z-index:9}
+.fade{position:absolute;inset:0;background:#EFEAE2;opacity:0;transition:opacity .6s;pointer-events:none;z-index:8}
+</style><div class="ph"><div class="sc">
+<div class="isl"></div>
+<div class="sb"><span>10:44</span><span>●●●● 5G ▮▮</span></div>
+<div class="hd"><span class="bk">‹</span><span class="bn">3</span><div class="av"></div><div class="nm"><b>Club Hípico La Gubía <span class="vf">✓</span></b><div class="st" id="st">Cuenta de empresa</div></div><div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="M16 10l6-3v10l-6-3z"/></svg><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></div></div>
+<div class="ch"><div class="ls" id="ls"></div><div class="fade" id="fd"></div></div>
+<div class="ib"><span class="pls">+</span><div class="inp ph0" id="inp">Mensaje</div><div class="sd" id="sd"><svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg></div><span class="mi" id="mi">🎙</span></div>
+<div class="hi"></div>
+</div></div></template>
+
+<!-- ================= SIMULACIÓN: CRM ================= -->
+<template id="t-crm"><style>
+:host{display:block;position:relative;width:100%;height:100%;font-family:"Archivo","Helvetica Neue",Arial,sans-serif;color:#E9EFF5;font-size:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+img{max-width:none}
+.app{position:absolute;inset:0;border-radius:14px;overflow:hidden;background:#04121F;display:flex;flex-direction:column;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.14)}
+.top{height:54px;flex:none;display:flex;align-items:center;gap:16px;padding:0 18px;background:#061A2E;border-bottom:1px solid #12314f}
+.top img{height:34px}
+.lg{font:500 11px/1.3 "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase}.lg b{color:#FFC428;font-weight:500}
+.se{flex:1;max-width:360px;height:32px;background:#0B2742;color:#7f93a8;display:flex;align-items:center;padding:0 12px;font-size:13px;margin-left:14px}
+.bell{margin-left:auto;position:relative;font-size:17px}.bell b{position:absolute;top:-5px;right:-8px;background:#FF6B3D;color:#fff;font-size:10px;border-radius:9px;padding:1px 5px;animation:pu 1.6s infinite}
+@keyframes pu{50%{transform:scale(1.18)}}
+.me{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}.me i{width:30px;height:30px;border-radius:50%;background:#FFC428;color:#0A2E50;font-style:normal;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+.bd{flex:1;display:flex;min-height:0}
+.ll{width:330px;border-right:1px solid #12314f;display:flex;flex-direction:column;flex:none}
+.lh{padding:14px 14px 8px;font-stretch:62%;font-weight:800;font-size:24px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:baseline}.lh span{font:500 11px/1 "IBM Plex Mono",monospace;color:#7f93a8;letter-spacing:.08em}
+.fc{display:flex;gap:6px;padding:0 14px 10px}.fc span{font:600 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;padding:6px 8px;background:#0B2742;color:#9fb2c6}
+.fc .h{background:rgba(255,107,61,.2);color:#FF9A78}
+.rows{flex:1;overflow:hidden}
+.r{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid #0d253d}
+.r.sel{background:#0B2742;box-shadow:inset 4px 0 0 #FFC428}
+.r.new{animation:sl .6s cubic-bezier(.2,.8,.2,1)}@keyframes sl{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:none}}
+.ai{width:34px;height:34px;border-radius:50%;background:#12314f;color:#c9d6e3;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.rn{flex:1;min-width:0}.rn b{display:block;font-size:14px;white-space:nowrap}.rn span{font:500 10.5px/1.5 "IBM Plex Mono",monospace;color:#7f93a8;letter-spacing:.04em;text-transform:uppercase}
+.scb{font:600 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.04em;padding:6px 7px;white-space:nowrap;text-transform:uppercase}
+.hot{background:rgba(255,107,61,.2);color:#FF9A78}.warm{background:rgba(255,196,40,.16);color:#FFD566}.cold{background:rgba(127,178,229,.16);color:#A9CCEF}
+.nw{font:600 9px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;background:#25D366;color:#04121F;padding:3px 5px;margin-left:7px;vertical-align:2px;display:inline-block}
+.dtl{flex:1;display:flex;flex-direction:column;min-width:0}
+.dh{padding:14px 20px 12px;display:flex;gap:16px;align-items:center;border-bottom:1px solid #12314f}
+.ring{width:62px;height:62px;border-radius:50%;background:conic-gradient(#FF6B3D calc(var(--p)*1%),#12314f 0);display:flex;align-items:center;justify-content:center;flex:none}
+.ring i{width:50px;height:50px;border-radius:50%;background:#04121F;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;font-size:18px;color:#FF9A78;font-variant-numeric:tabular-nums}
+.dn b{font-stretch:62%;font-weight:900;font-size:36px;line-height:.9;text-transform:uppercase}.dn div{font:500 11px/1 "IBM Plex Mono",monospace;color:#7f93a8;margin-top:6px;letter-spacing:.04em}
+.act{margin-left:auto;display:flex;gap:7px}
+.bt{height:36px;padding:0 12px;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;background:#0B2742;border:1px solid #1b3f63;transition:all .3s;white-space:nowrap}
+.bt.call{background:#FFC428;color:#0A2E50;border-color:#FFC428}.bt.live{background:#E5413B;color:#fff;border-color:#E5413B;animation:pu 1.2s infinite}
+.bt.wa{color:#4BD07F}
+.pp{display:flex;gap:3px;padding:12px 20px;border-bottom:1px solid #12314f}
+.pp span{flex:1;text-align:center;font:600 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;padding:9px 0;background:#0a2036;color:#5f768d;transition:all .4s;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.pp .dn2{background:#12314f;color:#c9d6e3}.pp .cu{background:#FFC428;color:#0A2E50}
+.cols{flex:1;display:flex;min-height:0}
+.tl{flex:1;padding:14px 20px;overflow:hidden}
+.tt{font:600 11px/1 "IBM Plex Mono",monospace;letter-spacing:.14em;color:#7f93a8;margin-bottom:8px}
+.ev{display:flex;gap:12px;align-items:flex-start;padding:6px 0;opacity:0;transform:translateY(8px);transition:all .4s}.ev.on{opacity:1;transform:none}
+.ev em{font:500 11px/1.8 "IBM Plex Mono",monospace;font-style:normal;color:#7f93a8;width:66px;flex:none}
+.ev i{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11px;background:#12314f}
+.ev b{font-weight:700;font-size:13.5px}.ev span{display:block;font-size:11.5px;color:#7f93a8}
+.cl{width:350px;border-left:1px solid #12314f;padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:#061A2E;flex:none}
+.chd{display:flex;justify-content:space-between;align-items:center}.chd b{font:600 11.5px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase}.tim{font:600 13px/1 "IBM Plex Mono",monospace;color:#FF9A78}
+.wv{height:34px;display:flex;align-items:center;gap:3px;flex:none}.wv i{flex:1;background:#FFC428;height:4px;transition:height .12s}
+.trs{flex:1;display:flex;flex-direction:column;gap:7px;overflow:hidden;justify-content:flex-end;min-height:0}
+.ln{font-size:12.5px;line-height:1.35;padding:7px 9px;background:#0B2742;animation:fi .35s ease}.ln b{color:#FFC428;font:600 10px/1.6 "IBM Plex Mono",monospace;letter-spacing:.1em;display:block}
+.ln.c b{color:#A9CCEF}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}}
+.sm{background:#F9F7F2;color:#0A2E50;padding:12px 14px;font-size:12.5px;line-height:1.45;display:none;animation:fi .5s ease;flex:none}
+.sm.on{display:block}
+.sm strong{display:block;font:600 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.12em;color:#630D16;margin-bottom:6px}
+.nx{margin-top:7px;background:#0A2E50;color:#FFC428;padding:7px 9px;font-weight:700}
+.idle{color:#7f93a8;font-size:12.5px;text-align:center;padding:30px 10px;border:1px dashed #1b3f63}
+</style><div class="app">
+<div class="top"><img src="img-logo.png" alt=""><span class="lg">La Gubía<br><b>CRM de venta</b></span><div class="se">Buscar lead, caballo o teléfono…</div><span class="bell">🔔<b id="nb">3</b></span><span class="me"><i>DU</i>David · closer</span></div>
+<div class="bd">
+<div class="ll"><div class="lh">Leads de hoy <span>23 nuevos</span></div><div class="fc"><span class="h">Calientes 7</span><span>Templados 9</span><span>Fríos 7</span></div><div class="rows" id="rows"></div></div>
+<div class="dtl">
+<div class="dh"><div class="ring" id="rg" style="--p:0"><i id="rv">0</i></div><div class="dn"><b>Laura Martín</b><div>MADRID · ES · +34 6•• ••• 482 · INTERÉS: QUÓRUM LG</div></div>
+<div class="act"><span class="bt call" id="cb">📞 Llamar</span><span class="bt wa">WhatsApp</span><span class="bt">✉ Email</span><span class="bt">📅 Agendar</span></div></div>
+<div class="pp" id="pp"><span>Nuevo</span><span>Cualificado</span><span>Videollamada</span><span>Prueba</span><span>Reserva</span><span>Vendido</span></div>
+<div class="cols">
+<div class="tl"><div class="tt">ACTIVIDAD DEL LEAD</div><div id="evs"></div></div>
+<div class="cl"><div class="chd"><b id="ct">Videollamada · Jue 17:00</b><span class="tim" id="tm"></span></div><div class="wv" id="wv"></div><div class="trs" id="trs"><div class="idle">Grabación y transcripción automáticas en cuanto empiece la llamada</div></div><div class="sm" id="sm"><strong>RESUMEN IA DE LA LLAMADA</strong>• Interés alto en Quórum LG: vio el VSL al 78 % y abrió la ficha 3 veces<br>• Para su hija de 14 años, junior · objetivo 1,20 m<br>• Presupuesto 30–40 k€ · encaja<div class="nx">Siguiente paso: prueba en Bunyola · sáb 5 dic · 11:00</div></div></div>
+</div></div></div></div></template>
+
+<script>
+(window.__boot=window.__boot||[]).push(()=>{
+/* ---------- WHATSAPP ---------- */
+__sim('wa',async(sr,{w,host})=>{
+  const $=id=>sr.getElementById(id),ls=$('ls'),st=$('st'),inp=$('inp'),sd=$('sd'),mi=$('mi'),fd=$('fd');
+  let clock=44;const T=()=>'10:'+String(clock).padStart(2,'0'),step=i=>host.onstep&&host.onstep(i);
+  function add(html,cls){const h0=ls.offsetHeight,d=document.createElement('div');d.className=cls;d.innerHTML=html;ls.appendChild(d);const h1=ls.offsetHeight;
+    try{ls.animate([{transform:'translateY('+(h1-h0)+'px)'},{transform:'none'}],{duration:340,easing:'cubic-bezier(.2,.8,.2,1)'})}catch(e){}
+    while(ls.offsetHeight>ls.parentNode.offsetHeight+420&&ls.children.length>3)ls.removeChild(ls.firstChild);return d}
+  const md=t=>t.replace(/\*(.+?)\*/g,'<b>$1</b>');
+  async function biz(t,typ){st.textContent='escribiendo…';st.classList.add('ty');const tp=add('<i></i><i></i><i></i>','tp');await w(typ||1500);tp.remove();st.textContent='en línea';st.classList.remove('ty');add(md(t)+'<span class="tm">'+T()+'</span>','m in');await w(950)}
+  async function me(t){inp.classList.remove('ph0');inp.innerHTML='<span class="cur"></span>';mi.style.display='none';sd.classList.add('on');let s='';
+    for(const c of t){s+=c;inp.innerHTML=s+'<span class="cur"></span>';await w(c===' '?70:42)}
+    await w(350);inp.textContent='Mensaje';inp.classList.add('ph0');sd.classList.remove('on');mi.style.display='';
+    const d=add(t+'<span class="tm">'+T()+' <span class="tk">✓✓</span></span>','m out');await w(800);d.querySelector('.tk').classList.add('r');await w(700)}
+  while(true){
+    ls.innerHTML='';clock=44;fd.style.opacity=0;st.textContent='Cuenta de empresa';step(-1);await w(900);
+    add('HOY','dt');await w(500);step(0);
+    add('<div class="md"><img src="img-bay.jpg" alt=""><div class="pl"></div><span class="du">▶ 1:48</span></div>Hola Laura 👋 Gracias por tu interés en <b>Quórum LG</b>.<br>KWPN · 8 años · 1,68 m · Salto 1,30 m<br><br>Aquí tienes su vídeo montado sin cortes y su ficha técnica completa: pedigrí, veterinario y resultados.<div class="ft">Club Hípico La Gubía · Bunyola</div><span class="tm">10:44</span>','m in');
+    await w(250);add('<div>▶  Ver vídeo completo</div><div>📅  Agendar prueba</div><div>💬  Hablar con un asesor</div>','bt');
+    await w(1500);step(1);add('<div class="dc"><div class="pdf">PDF</div><div><div class="dn">Ficha técnica · Quórum LG.pdf</div><div class="ds">6 páginas · PDF · 2,4 MB</div></div></div><span class="tm">10:44</span>','m in');
+    await w(2400);clock=46;
+    await me('¡Me encanta! ¿Qué tal es de carácter? Es para mi hija de 14, salta 1,10 😊');
+    step(2);await biz('¡Hola Laura! Quórum es muy noble: ya lo han montado jinetes junior en 1,20 sin problema 🙌',1600);
+    step(3);await biz('Para recomendarte bien: ¿tu hija compite ya en concursos?',1100);
+    clock=47;await me('Sí, autonómicos. Queremos subir a 1,20 este año');
+    await biz('¡Encaja con ese plan! ¿Qué presupuesto aproximado manejáis?',1300);
+    clock=48;await me('Entre 30 y 40 mil');
+    step(4);await biz('Genial 👌 Quórum está en ese rango. ¿Os viene bien una *videollamada con David el jueves a las 17:00* para verlo montado en directo?',1900);
+    clock=49;await me('¡Perfecto! 👍');
+    await biz('¡Hecho! 📅 *Jueves · 17:00*. Te llega la invitación por aquí y por email. ¡Hasta el jueves, Laura!',1500);
+    await w(4500);fd.style.opacity=1;await w(700)}
+});
+/* ---------- CRM ---------- */
+__sim('crm',async(sr,{w,every})=>{
+  const $=id=>sr.getElementById(id);
+  const L=[['JV','Jan de Vries','Anuncio 08 · NL',74],['SK','Sophie Keller','Anuncio 08 · DE',66],['TF','Tom Fisher','Anuncio 07 · EN',81],['CR','Carmen Rojas','Reel orgánico · ES',58],['MP','Marc Puig','Anuncio 12 · ES',49],['LF','Lucía Ferrer','Anuncio 05 · ES',35],['AB','Anna Berg','Anuncio 08 · SV',62]];
+  const cls=s=>s>=70?'hot':s>=40?'warm':'cold',lab=s=>s>=70?'Caliente':s>=40?'Templado':'Frío';
+  const row=(a,n,o,s,x)=>`<div class="r${x||''}"><span class="ai">${a}</span><div class="rn"><b>${n}${x?'<span class="nw">NUEVO</span>':''}</b><span>${o}</span></div><span class="scb ${cls(s)}">${s} · ${lab(s)}</span></div>`;
+  const E=[['10:41','📣','Vio el anuncio 03','Ángulo «Riesgo» · Instagram'],['10:42','▶','Vio el VSL','78 % · capítulo «Cómo compras»'],['10:44','📝','Rellenó el formulario','Interés: Quórum LG · hija junior'],['10:44','💬','WhatsApp · plantilla 04','Ficha técnica enviada · leída'],['10:44','✉','Email de bienvenida','Abierto 2 veces'],['10:46','🤖','Setter IA cualificando','Junior · 1,20 m · 30–40 k€'],['10:49','🔥','Lead caliente · 87 puntos','Asignado a David · videollamada jue 17:00']];
+  const T=[['DAVID','Hola Laura, soy David. Te enseño a Quórum en directo, ¿me ves bien?'],['LAURA','¡Sí! Qué bonito es. ¿Cómo va en concurso?',1],['DAVID','Muy regular: cuatro recorridos sin faltas en 1,30 esta temporada.'],['LAURA','Nos gustaría que lo probara mi hija.',1],['DAVID','Perfecto. Os reservo la prueba en Bunyola el sábado 5 a las 11:00.']];
+  for(let i=0;i<34;i++)$('wv').appendChild(document.createElement('i'));
+  let wvOn=false,sec=0,ticking=false;
+  every(()=>{[...$('wv').children].forEach(b=>b.style.height=(wvOn?4+Math.random()*28:4)+'px')},130);
+  every(()=>{if(ticking){sec++;$('tm').textContent='00:'+String(sec).padStart(2,'0')}},380);
+  const stage=n=>[...$('pp').children].forEach((s,i)=>{s.className=i<n?'dn2':i===n?'cu':''});
+  async function score(to){for(let v=0;v<=to;v+=3){$('rg').style.setProperty('--p',v);$('rv').textContent=v;await w(18)}$('rg').style.setProperty('--p',to);$('rv').textContent=to}
+  while(true){
+    $('rows').innerHTML=L.map(l=>row(...l)).join('');$('evs').innerHTML='';$('trs').innerHTML='<div class="idle">Grabación y transcripción automáticas en cuanto empiece la llamada</div>';$('sm').classList.remove('on');$('tm').textContent='';$('cb').className='bt call';$('cb').textContent='📞 Llamar';$('ct').textContent='Videollamada · Jue 17:00';stage(0);$('rg').style.setProperty('--p',0);$('rv').textContent=0;wvOn=false;ticking=false;sec=0;$('nb').textContent='3';
+    await w(900);$('rows').insertAdjacentHTML('afterbegin',row('LM','Laura Martín','Anuncio 03 · ES',87,' sel new'));$('nb').textContent='4';
+    for(const [t,ic,b,s] of E){$('evs').insertAdjacentHTML('beforeend',`<div class="ev"><em>${t}</em><i>${ic}</i><div><b>${b}</b><span>${s}</span></div></div>`);await w(60);$('evs').lastChild.classList.add('on');await w(540)}
+    stage(1);await score(87);await w(500);stage(2);await w(900);
+    $('cb').className='bt live';$('cb').textContent='● En llamada';$('ct').textContent='Videollamada en curso';$('trs').innerHTML='';wvOn=true;ticking=true;
+    for(const [who,tx,c] of T){$('trs').insertAdjacentHTML('beforeend',`<div class="ln${c?' c':''}"><b>${who}</b>${tx}</div>`);await w(1550)}
+    ticking=false;wvOn=false;$('tm').textContent='06:32';$('cb').className='bt call';$('cb').textContent='✓ Llamada guardada';$('ct').textContent='Videollamada finalizada';
+    await w(500);$('sm').classList.add('on');stage(3);
+    $('evs').insertAdjacentHTML('beforeend','<div class="ev on"><em>Jue 17:06</em><i>📞</i><div><b>Videollamada · 06:32</b><span>Transcrita · prueba reservada</span></div></div>');
+    await w(5600)}
+});
+});
+</script>
+
+<script>
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const stage=$('#stage'),frame=$('#frame'),slides=$$('.s'),N=slides.length,dim=$('#dim'),edge=$('#edge');
+const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const pad=n=>String(n).padStart(2,'0'),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const W=1440,H=1000;
+let cur=0;
+const hooks=window.__hooks=window.__hooks||{};
+
+/* ---- escala del escenario ---- */
+function fit(){const cs=getComputedStyle(frame);
+  const w=frame.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),h=frame.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  stage.style.transform='translate(-50%,-50%) scale('+Math.min(w/W,h/H)+')'}
+const refit=()=>{fit();setTimeout(fit,120);setTimeout(fit,450)};addEventListener('resize',refit);addEventListener('orientationchange',refit);
+if(window.visualViewport)visualViewport.addEventListener('resize',refit);try{new ResizeObserver(fit).observe(frame)}catch(_){}fit();
+
+/* ---- titulares: letra a letra (redonda) y palabra a palabra (cursiva) ---- */
+$$('.ln > *').forEach(el=>{let c=0;const lab=el.textContent.replace(/\s+/g,' ').trim();
+  (function walk(node){[...node.childNodes].forEach(n=>{
+    if(n.nodeType===3){const fr=document.createDocumentFragment(),italic=!!(n.parentNode.closest&&n.parentNode.closest('em,.it'));
+      n.textContent.split(/(\s+)/).forEach(tok=>{if(!tok)return;if(/^\s+$/.test(tok)){fr.appendChild(document.createTextNode(' '));return}
+        const wd=document.createElement('span');wd.className='wd';wd.setAttribute('aria-hidden','true');
+        if(italic){wd.classList.add('ch');wd.style.setProperty('--c',c);c+=4;wd.textContent=tok}
+        else[...tok].forEach(x=>{const s=document.createElement('span');s.className='ch';s.style.setProperty('--c',c++);s.textContent=x;wd.appendChild(s)});
+        fr.appendChild(wd)});n.replaceWith(fr)}
+    else if(n.nodeType===1)walk(n)})})(el);
+  el.setAttribute('aria-label',lab)});
+$$('.mq > div').forEach(d=>{d.innerHTML+=d.innerHTML});
+
+/* ---- polvo de pista: partículas que forman el caballo del logo ---- */
+const P=(()=>{
+  const cv=$('#dust');if(reduced||!cv||!cv.getContext)return{form(){},release(){},tone(){},touch(){},blow(){}};
+  const ctx=cv.getContext('2d');cv.width=W;cv.height=H;
+  const NP=4400,AMB=150,ps=[];
+  for(let i=0;i<NP;i++)ps.push({x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,tx:0,ty:0,a:0,m:i<AMB?0:2,s:i<AMB?1.4+Math.random()*2.4:(Math.random()<.3?4.4:3.2),ph:Math.random()*6.283,dl:0});
+  let mask=null,pend=null,col='255,196,40',acol='249,247,242',wind=0,tp=null,t0f=0;
+  const im=new Image();
+  im.onload=()=>{try{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d');x.drawImage(im,0,0);
+    const d=x.getImageData(0,0,c.width,c.height).data;mask=[];
+    for(let y=0;y<c.height;y++)for(let xx=0;xx<c.width;xx++)if(d[(y*c.width+xx)*4+3]>110)mask.push(xx/c.width-.5,y/c.height-.5);
+    if(pend){const q=pend;pend=null;api.form(q)}}catch(e){mask=null}};
+  im.src='img-horse.png';
+  const api={
+    form(o){if(!mask){pend=o;return}if(o.color)col=o.color;const n=mask.length/2;t0f=performance.now();
+      for(let i=AMB;i<NP;i++){const p=ps[i],k=((i*7919)%n)*2;
+        p.tx=o.x+mask[k]*o.size+(Math.random()-.5)*3.6;p.ty=o.y+mask[k+1]*o.size+(Math.random()-.5)*3.6;
+        if(p.m!==1){const an=Math.random()*6.283,r=420+Math.random()*760;p.x=o.x+Math.cos(an)*r;p.y=o.y+Math.sin(an)*r*.75;p.vx=p.vy=0;p.a=0}
+        p.m=1;p.dl=(o.delay||0)+Math.random()*1000}},
+    release(){pend=null;for(let i=AMB;i<NP;i++){const p=ps[i];if(p.m===1){p.m=3;const an=Math.atan2(p.y-p.ty+(Math.random()-.5)*40,p.x-p.tx+(Math.random()-.5)*40)+(Math.random()-.5)*2,sp=1.5+Math.random()*7;p.vx+=Math.cos(an)*sp;p.vy+=Math.sin(an)*sp-1.2}}},
+    tone(t){if(t==='dark'){acol='249,247,242';col='255,196,40'}else{acol='10,46,80';col='10,46,80'}},
+    touch(x,y){tp={x,y,t:performance.now()}},
+    blow(v){wind=clamp(wind+v,-26,26)}
+  };
+  let last=0,acc=0;
+  function frame(now){requestAnimationFrame(frame);if(document.hidden){last=now;return}acc+=Math.min(now-(last||now),80);last=now;let steps=0;
+    while(acc>=16.6&&steps<5){acc-=16.6;steps++;sim(now)}if(steps)draw(now)}
+  function sim(now){const t=now/1000,since=now-t0f,tq=tp&&now-tp.t<500?tp:null;wind*=.92;
+    for(let i=0;i<AMB;i++){const p=ps[i];p.vx+=Math.sin(t*.3+p.ph)*.012+wind*.03;p.vy+=Math.cos(t*.23+p.ph*1.7)*.008-.002;p.vx*=.97;p.vy*=.97;p.x+=p.vx+.14;p.y+=p.vy;
+      if(p.x>W+10)p.x=-10;else if(p.x<-10)p.x=W+10;if(p.y<-10)p.y=H+10;else if(p.y>H+10)p.y=-10}
+    for(let i=AMB;i<NP;i++){const p=ps[i];if(p.m===2)continue;
+      if(p.m===1){if(since<p.dl)continue;p.vx=(p.vx+(p.tx-p.x)*.045)*.86;p.vy=(p.vy+(p.ty-p.y)*.045)*.86;
+        if(tq){const dx=p.x-tq.x,dy=p.y-tq.y,d2=dx*dx+dy*dy;if(d2<19600){const f=(1-d2/19600)*6/Math.sqrt(d2+1);p.vx+=dx*f;p.vy+=dy*f}}
+        p.vx+=wind*.12;p.x+=p.vx;p.y+=p.vy;p.a+=(1-p.a)*.06}
+      else{p.vx=p.vx*.975+wind*.08;p.vy=p.vy*.975+.025;p.x+=p.vx;p.y+=p.vy;p.a*=.966;if(p.a<.02)p.m=2}}}
+  function draw(now){const t=now/1000;ctx.clearRect(0,0,W,H);ctx.fillStyle='rgb('+acol+')';
+    for(let i=0;i<AMB;i++){const p=ps[i];ctx.globalAlpha=.09+.2*(.5+.5*Math.sin(t*.9+p.ph));ctx.fillRect(p.x,p.y,p.s,p.s)}
+    ctx.fillStyle='rgb('+col+')';
+    for(let i=AMB;i<NP;i++){const p=ps[i];if(p.m===2||p.a<.02)continue;ctx.globalAlpha=p.a*(.7+.3*Math.sin(t*3+p.ph));ctx.fillRect(p.x-p.s/2,p.y-p.s/2,p.s,p.s)}
+    ctx.globalAlpha=1}
+  requestAnimationFrame(frame);return api})();
+window.__P=P;
+
+/* ---- recorrido inferior ---- */
+const course=$('#course'),runner=$('#runner'),cfill=$('#cfill');
+const ticks=slides.map((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Diapositiva '+(i+1)+': '+s.dataset.sec);
+  b.style.left=(i/(N-1)*100)+'%';if(s.classList.contains('sec'))b.className='sec';b.innerHTML='<i></i>';
+  b.addEventListener('click',e=>{e.stopPropagation();show(i)});course.appendChild(b);return b});
+
+/* ---- contadores ---- */
+function counters(s){$$('[data-count]',s).forEach(el=>{const to=+el.dataset.count,from=+(el.dataset.from||0),pre=el.dataset.pre||'',suf=el.dataset.suf||'';
+  if(reduced){el.textContent=pre+to+suf;return}
+  const t0=performance.now()+(+(el.dataset.delay||700)),dur=1400;el.textContent=pre+from+suf;
+  (function step(now){if(!s.classList.contains('on'))return;const p=clamp((now-t0)/dur,0,1),e=1-Math.pow(1-p,3);
+    el.textContent=pre+Math.round(from+(to-from)*e)+suf;if(p<1)requestAnimationFrame(step)})(performance.now())})}
+
+/* ---- simulaciones en shadow DOM ---- */
+const sims={};
+window.__sim=function(name,play){
+  const host=$('[data-sim="'+name+'"]'),tpl=$('#t-'+name);if(!host||!tpl)return;
+  const sr=host.attachShadow({mode:'open'});sr.appendChild(tpl.content.cloneNode(true));
+  let token=0,ivs=[];
+  sims[name]={start(){this.stop();const my=++token,alive=()=>my===token;
+      sr.replaceChildren(tpl.content.cloneNode(true));
+      const w=ms=>new Promise((res,rej)=>setTimeout(()=>alive()?res():rej('stop'),ms));
+      const every=(fn,ms)=>{const id=setInterval(()=>{alive()?fn():clearInterval(id)},ms);ivs.push(id);return id};
+      Promise.resolve().then(()=>play(sr,{w,every,alive,host})).catch(e=>{if(e!=='stop')console.error(e)})},
+    stop(){token++;ivs.forEach(clearInterval);ivs=[]}};
+};
+
+function enter(s){P.tone(s.dataset.tone);counters(s);$$('[data-sim]',s).forEach(h=>sims[h.dataset.sim]&&sims[h.dataset.sim].start());hooks[s.id]&&hooks[s.id].enter&&hooks[s.id].enter(s)}
+function leave(s){$$('[data-sim]',s).forEach(h=>sims[h.dataset.sim]&&sims[h.dataset.sim].stop());hooks[s.id]&&hooks[s.id].leave&&hooks[s.id].leave(s)}
+
+function hud(){const s=slides[cur];stage.dataset.tone=s.dataset.tone;if(cur===0||cur===N-1)stage.setAttribute('data-cover','');else stage.removeAttribute('data-cover');
+  document.body.style.background=s.dataset.tone==='light'?'#F9F7F2':s.dataset.tone==='yel'?'#FFC428':'#061A2E';
+  $('#hsec').textContent=s.dataset.sec;$('#hnum').textContent=pad(cur+1)+' / '+pad(N);
+  const pct=cur/(N-1)*100;cfill.style.width=pct+'%';runner.style.left=pct+'%';runner.classList.remove('hop');void runner.offsetWidth;runner.classList.add('hop');
+  ticks.forEach((b,i)=>b.classList.toggle('done',i<=cur));
+  try{history.replaceState(null,'','#diapo-'+(cur+1))}catch(e){}}
+
+/* ---- transición: la diagonal sigue al dedo ---- */
+let tr=null,raf=0,lastP=0;
+function setP(p){tr.p=p;const s=120,A=tr.A,B=tr.B;let c;
+  if(tr.dir>0){c=(W+2*s)*(1-p)-s;A.style.clipPath='polygon(0 0,'+(c+s)+'px 0,'+(c-s)+'px 100%,0 100%)'}
+  else{c=(W+2*s)*p-s;A.style.clipPath='polygon('+(c+s)+'px 0,100% 0,100% 100%,'+(c-s)+'px 100%)'}
+  edge.style.transform='translateX('+c+'px) skewX(-13.5deg)';edge.style.opacity=p>.002&&p<.998?1:0;
+  B.style.transform='translateX('+(tr.dir*(1-p)*80)+'px) scale('+(1+(1-p)*.08)+')';
+  dim.style.opacity=(1-p)*.66;P.blow((p-lastP)*-tr.dir*60);lastP=p}
+function begin(i){if(tr||i<0||i>=N||i===cur)return false;const A=slides[cur],B=slides[i];
+  tr={A,B,i,dir:i>cur?1:-1,p:0,entered:false};lastP=0;B.classList.add('pre');A.style.zIndex=3;B.style.zIndex=1;setP(0);return true}
+function enterB(){if(tr.entered)return;tr.entered=true;tr.B.classList.remove('pre');tr.B.classList.add('on');cur=tr.i;hud();enter(tr.B)}
+function clean(){const{A,B}=tr;A.style.clipPath='';A.style.zIndex='';B.style.transform='';B.style.zIndex='';dim.style.opacity=0;edge.style.opacity=0;tr=null}
+function run(to,dur,ease,cb){const from=tr.p,t0=performance.now();cancelAnimationFrame(raf);
+  const step=now=>{if(!tr)return;const k=clamp((now-t0)/dur,0,1),e=ease(k);setP(from+(to-from)*e);
+    if(to===1&&tr.p>.5)enterB();if(k<1)raf=requestAnimationFrame(step);else cb()};raf=requestAnimationFrame(step)}
+const eOut=k=>1-Math.pow(1-k,3),eIO=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+function finish(ease,dur){run(1,dur,ease,()=>{enterB();const A=tr.A;leave(A);A.classList.remove('on');clean()})}
+function cancel(){run(0,320,eOut,()=>{tr.B.classList.remove('pre');clean()})}
+function show(i,instant){i=clamp(i,0,N-1);if(i===cur&&!instant)return;
+  if(instant||reduced){if(tr)return;const A=slides[cur],B=slides[i];if(A!==B){leave(A);A.classList.remove('on')}B.classList.add('on');cur=i;hud();enter(B);return}
+  if(begin(i))finish(eIO,1050)}
+const next=()=>show(cur+1),prev=()=>show(cur-1);
+window.__go=show;
+
+/* ---- controles ---- */
+$('#bnext').addEventListener('click',e=>{e.stopPropagation();next()});
+$('#bprev').addEventListener('click',e=>{e.stopPropagation();prev()});
+$('#bfull').addEventListener('click',e=>{e.stopPropagation();const d=document;try{(d.fullscreenElement?d.exitFullscreen():d.documentElement.requestFullscreen()).catch(()=>{})}catch(_){}});
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}else if(e.key==='Home')show(0);else if(e.key==='End')show(N-1)});
+let pd=null,wl=false;
+const toStage=e=>{const r=stage.getBoundingClientRect();return[(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H]};
+stage.addEventListener('pointerdown',e=>{if(!wl){wl=true;try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(_){}}
+  if(e.target.closest('button,a'))return;pd={id:e.pointerId,x:e.clientX,y:e.clientY,lx:e.clientX,lt:performance.now(),v:0,drag:false,dead:false}});
+addEventListener('pointermove',e=>{const q=toStage(e);P.touch(q[0],q[1]);if(!pd||e.pointerId!==pd.id||pd.dead)return;
+  const dx=e.clientX-pd.x,dy=e.clientY-pd.y;
+  if(!pd.drag){if(Math.abs(dx)<14||Math.abs(dx)<Math.abs(dy))return;const dir=dx<0?1:-1;if(tr||!begin(cur+dir)){pd.dead=true;return}
+    pd.drag=true;pd.dir=dir;try{stage.setPointerCapture(pd.id)}catch(_){}stage.style.cursor='grabbing'}
+  const now=performance.now();pd.v=(e.clientX-pd.lx)/Math.max(1,now-pd.lt);pd.lx=e.clientX;pd.lt=now;
+  setP(clamp((-dx*pd.dir)/(stage.getBoundingClientRect().width*.62),0,1))});
+function up(e){if(!pd||e.pointerId!==pd.id)return;const d=pd;pd=null;stage.style.cursor='';
+  if(d.drag&&tr){const fast=(-d.v*d.dir)>.4;if(tr.p>.28||(fast&&tr.p>.04))finish(eOut,Math.max(280,650*(1-tr.p)));else cancel();return}
+  if(!d.dead&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<12&&e.type==='pointerup'){const r=stage.getBoundingClientRect();(e.clientX-r.left)/r.width<.2?prev():next()}}
+addEventListener('pointerup',up);addEventListener('pointercancel',up);
+
+/* ---- arranque ---- */
+function fromHash(){const m=/^#diapo-(\d+)$/.exec(location.hash);return m?clamp(+m[1],1,N)-1:0}
+addEventListener('hashchange',()=>{const i=fromHash();if(i!==cur)show(i,true)});
+const start=fromHash();slides.forEach((s,i)=>s.classList.toggle('on',i===start));cur=start;
+requestAnimationFrame(()=>{(window.__boot||[]).forEach(f=>f({$,$$,reduced,P}));hud();enter(slides[cur])});
+})();
+</script>
+
+</body>
+</html>
